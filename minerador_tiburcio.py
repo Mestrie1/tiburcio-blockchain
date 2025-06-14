@@ -1,79 +1,64 @@
-import hashlib
 import json
 import time
-import os
+import hashlib
 
-# CONFIGURAÇÃO — SEU ENDEREÇO DA CARTEIRA
-MINERADOR_ENDERECO = "wjkg42GwXUNsspnPNJ7L8qZJo3sBt8NWWrKG7TAKwpJF8KYaM"
-
-# CONFIGURAÇÃO DA RECOMPENSA POR BLOCO
+ARQUIVO_BLOCKCHAIN = 'blockchain.json'
+ENDERECO_DESTINO = "wjkg42GwXUNsspnPNJ7L8qZJo3sBt8NWWrKG7TAKwpJF8KYaM"
 RECOMPENSA = 50
+MAX_SUPPLY = 21000000  # Limite total de moedas, igual Bitcoin (21 milhões)
 
-# Função para calcular o hash de um bloco
-def calcular_hash(bloco):
+def carregar_blockchain():
+    try:
+        with open(ARQUIVO_BLOCKCHAIN, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {"blocos": []}
+
+def salvar_blockchain(blockchain):
+    with open(ARQUIVO_BLOCKCHAIN, 'w') as f:
+        json.dump(blockchain, f, indent=4)
+
+def calcular_hash_bloco(bloco):
     bloco_serializado = json.dumps(bloco, sort_keys=True).encode()
     return hashlib.sha256(bloco_serializado).hexdigest()
 
-# Função para carregar a blockchain
-def carregar_blockchain():
-    if os.path.exists("blockchain.json"):
-        with open("blockchain.json", "r") as arquivo:
-            return json.load(arquivo)
-    return []
+def calcular_total_moedas(blockchain):
+    total = 0
+    for bloco in blockchain['blocos']:
+        for transacao in bloco.get('transacoes', []):
+            if transacao['origem'] == 'recompensa':
+                total += transacao['quantidade']
+    return total
 
-# Função para salvar a blockchain
-def salvar_blockchain(blockchain):
-    with open("blockchain.json", "w") as arquivo:
-        json.dump(blockchain, arquivo, indent=4)
-
-# Função para minerar um novo bloco
-def minerar_bloco(blockchain, transacoes):
-    ultimo_hash = blockchain[-1]["hash"] if blockchain else "0"
-    index = len(blockchain) + 1
+def minerar_novo_bloco(blockchain, transacoes):
+    indice = len(blockchain['blocos'])
     timestamp = time.time()
+    anterior = blockchain['blocos'][-1]['hash'] if blockchain['blocos'] else "0" * 64
 
     bloco = {
-        "index": index,
+        "indice": indice,
         "timestamp": timestamp,
         "transacoes": transacoes,
-        "recompensa": {
-            "para": MINERADOR_ENDERECO,
-            "quantidade": RECOMPENSA
-        },
-        "anterior": ultimo_hash,
-        "nonce": 0
+        "anterior": anterior,
     }
+    bloco['hash'] = calcular_hash_bloco(bloco)
 
-    dificuldade = 4  # Número de zeros iniciais no hash (pode aumentar depois)
-    prefixo_alvo = "0" * dificuldade
-
-    while True:
-        hash_bloco = calcular_hash(bloco)
-        if hash_bloco.startswith(prefixo_alvo):
-            bloco["hash"] = hash_bloco
-            return bloco
-        bloco["nonce"] += 1
-
-# Função para carregar transações pendentes
-def carregar_transacoes_pendentes():
-    if os.path.exists("transacoes_pendentes.txt"):
-        with open("transacoes_pendentes.txt", "r") as arquivo:
-            return json.load(arquivo)
-    return []
-
-# Função para limpar as transações pendentes após mineração
-def limpar_transacoes_pendentes():
-    if os.path.exists("transacoes_pendentes.txt"):
-        os.remove("transacoes_pendentes.txt")
-
-# Loop principal de mineração
-blockchain = carregar_blockchain()
-
-while True:
-    transacoes = carregar_transacoes_pendentes()
-    bloco = minerar_bloco(blockchain, transacoes)
-    blockchain.append(bloco)
+    blockchain['blocos'].append(bloco)
     salvar_blockchain(blockchain)
-    limpar_transacoes_pendentes()
-    print(f"🪙 Bloco {bloco['index']} minerado! Hash: {bloco['hash']}")
-    print(f"🏆 {RECOMPENSA} $Tib enviados para: {MINERADOR_ENDERECO}\n")
+    print(f"Bloco {indice} minerado e salvo!")
+
+def main():
+    blockchain = carregar_blockchain()
+    
+    while True:
+        total_moedas = calcular_total_moedas(blockchain)
+        if total_moedas >= MAX_SUPPLY:
+            print(f"Limite máximo de {MAX_SUPPLY} TiBúrcio atingido. Mineração encerrada.")
+            break
+        
+        transacoes = [{"origem": "recompensa", "destino": ENDERECO_DESTINO, "quantidade": RECOMPENSA}]
+        minerar_novo_bloco(blockchain, transacoes)
+        time.sleep(2)
+
+if __name__ == "__main__":
+    main()
