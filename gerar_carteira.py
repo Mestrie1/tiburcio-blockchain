@@ -1,20 +1,15 @@
-import os
-import hashlib
-import base58
+from ecdsa import SigningKey, VerifyingKey, SECP256k1
 
-def gerar_chave_privada():
-    return os.urandom(32).hex()
+def gerar_chaves():
+    chave_privada = SigningKey.generate(curve=SECP256k1)
+    chave_publica = chave_privada.get_verifying_key()
+    return chave_privada, chave_publica
 
-def gerar_endereco(chave_privada):
-    chave_bytes = bytes.fromhex(chave_privada)
-    hash_publico = hashlib.sha256(chave_bytes).digest()
-    endereco = base58.b58encode_check(hash_publico).decode()
-    return endereco
+def assinar_mensagem(chave_privada, mensagem):
+    return chave_privada.sign(mensagem.encode('utf-8'))
 
-chave_privada = gerar_chave_privada()
-endereco = gerar_endereco(chave_privada)
-
-print("🔑 Sua chave privada (guarde com segurança!):")
-print(chave_privada)
-print("\n📬 Seu endereço público:")
-print(endereco)
+def verificar_assinatura(chave_publica, mensagem, assinatura):
+    try:
+        return chave_publica.verify(assinatura, mensagem.encode('utf-8'))
+    except:
+        return False
