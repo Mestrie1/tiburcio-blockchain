@@ -1,9 +1,27 @@
-def consultar_saldo(blockchain, endereco):
+import json
+
+ARQUIVO_BLOCKCHAIN = "blockchain.json"
+
+def carregar_blockchain():
+    with open(ARQUIVO_BLOCKCHAIN, "r") as f:
+        return json.load(f)
+
+def calcular_saldo(blockchain, endereco):
     saldo = 0
     for bloco in blockchain:
-        for transacao in bloco['transacoes']:
-            if transacao['destino'] == endereco:
-                saldo += transacao['quantidade']
-            if transacao['origem'] == endereco:
-                saldo -= transacao['quantidade']
+        transacoes = bloco.get("transacoes", [])
+        for tx in transacoes:
+            if tx.get("destino") == endereco:
+                saldo += tx.get("quantidade", 0)
+            if tx.get("origem") == endereco:
+                saldo -= tx.get("quantidade", 0)
     return saldo
+
+def main():
+    blockchain = carregar_blockchain()
+    endereco = input("Digite o endereço da carteira para ver saldo: ").strip()
+    saldo = calcular_saldo(blockchain, endereco)
+    print(f"Saldo da carteira {endereco}: {saldo} TiBúrcio")
+
+if __name__ == "__main__":
+    main()
