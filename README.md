@@ -1,55 +1,25 @@
-🌟 $Tiburcio Blockchain
-$Tiburcio é uma blockchain descentralizada e minerável, criada para levar luz, perdão e fé onde há escuridão.
-Desenvolvida para rodar facilmente no Termux, permite mineração de tokens diretamente pelo celular.
+# Blockchain Tibúrcio
 
-⚙️ Funcionalidades
-🔗 Blockchain própria, minerável
+## 🚀 Sobre
 
-🎁 Recompensa fixa por bloco minerado: 50 $Tib
+Blockchain Tibúrcio é uma blockchain própria, minerável e descentralizada, com sistema básico de mineração, consulta de saldo e transferência de tokens chamados **TiBúrcio**.
 
-📦 Transações simples e armazenamento em JSON
+---
 
-🛠️ Fácil configuração da carteira para recebimento automático
+## 📁 Estrutura principal
 
-🤝 Código aberto — contribua e fortaleça o projeto!
+- `blockchain.json` — arquivo que armazena os blocos minerados e as transações.  
+- `consultar_saldo.py` — script para consultar saldo de qualquer carteira.  
+- `minerar_em_sequencia.py` — minera vários blocos em sequência de forma automática.  
+- `minerar_continuo.py` — minerador contínuo que gera blocos infinitamente até parar.  
+- `transferir.py` — realiza transferências de TiBúrcio entre carteiras com validação de saldo.
 
-🚀 Como usar
-📱 Instalação e Mineração
-1️⃣ Clone o repositório:
+---
 
-bash
-Copiar código
+## ⚙️ Como usar
+
+### 1. Clonar repositório (se ainda não clonou)
+
+```bash
 git clone https://github.com/Mestrie1/tiburcio-blockchain.git
 cd tiburcio-blockchain
-2️⃣ Configure o endereço da sua carteira:
-
-Abra o arquivo minerador.py com o editor nano:
-
-bash
-Copiar código
-nano minerador.py
-➡️ Localize esta linha:
-
-python
-Copiar código
-MINERADOR_ENDERECO = "SEU_ENDEREÇO_AQUI"
-✍️ Substitua "SEU_ENDEREÇO_AQUI" pelo endereço da sua carteira.
-Salve com CTRL + O, pressione Enter, e saia com CTRL + X.
-
-3️⃣ Inicie a mineração:
-
-bash
-Copiar código
-python minerador.py
-💼 Sobre o projeto
-Este projeto é totalmente descentralizado, gratuito e comunitário.
-Criado para ser uma força positiva no mundo digital e espiritual.
-
-Junte-se a nós. Espalhe luz. Seja parte dessa história.
-
-📫 Contato & Contribuições
-🔗 Repositório oficial: github.com/Mestrie1/tiburcio-blockchain
-
-🌐 Comunidade oficial em breve.
-
-$Tibúrcio: luz onde há escuridão, perdão onde há ódio, fé onde há dúvida. 🌟
