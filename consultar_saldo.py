@@ -1,26 +1,33 @@
 import json
+import os
 
-ARQUIVO_BLOCKCHAIN = "blockchain.json"
+CAMINHO_BLOCKCHAIN = 'blockchain.json'
 
 def carregar_blockchain():
-    with open(ARQUIVO_BLOCKCHAIN, "r") as f:
+    if not os.path.exists(CAMINHO_BLOCKCHAIN):
+        return []
+    with open(CAMINHO_BLOCKCHAIN, 'r') as f:
         return json.load(f)
 
-def calcular_saldo(blockchain, endereco):
+def calcular_saldo(endereco):
+    blockchain = carregar_blockchain()
     saldo = 0
+
     for bloco in blockchain:
-        for transacao in bloco.get("transacoes", []):
-            if transacao.get("destino") == endereco:
-                saldo += transacao.get("quantidade", 0)
-            if transacao.get("origem") == endereco:
-                saldo -= transacao.get("quantidade", 0)
+        recompensa = bloco.get('recompensa')
+        if recompensa and recompensa.get('para') == endereco:
+            saldo += recompensa.get('quantidade', 0)
+
+        transacoes = bloco.get('transacoes', [])
+        for tx in transacoes:
+            if tx.get('de') == endereco:
+                saldo -= tx.get('quantidade', 0)
+            if tx.get('para') == endereco:
+                saldo += tx.get('quantidade', 0)
+
     return saldo
 
-def main():
-    endereco = input("Digite o endereço da carteira para ver saldo: ")
-    blockchain = carregar_blockchain()
-    saldo = calcular_saldo(blockchain, endereco)
-    print(f"💰 Saldo da carteira {endereco}: {saldo} Tibúrcio")
-
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    endereco = input('Digite o endereço da carteira para ver saldo: ').strip()
+    saldo = calcular_saldo(endereco)
+    print(f'💰 Saldo da carteira {endereco}: {saldo} Tibúrcio')
