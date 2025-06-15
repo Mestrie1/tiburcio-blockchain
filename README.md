@@ -1,25 +1,44 @@
-# Blockchain Tibúrcio
+# 🌀 Tibúrcio Blockchain
 
-## 🚀 Sobre
+**Bem-vindo ao Tibúrcio Blockchain**, a primeira blockchain minerável, descentralizada e espiritual do Brasil.
 
-Blockchain Tibúrcio é uma blockchain própria, minerável e descentralizada, com sistema básico de mineração, consulta de saldo e transferência de tokens chamados **TiBúrcio**.
+**Essa não é apenas uma criptomoeda. É um movimento.**
 
----
-
-## 📁 Estrutura principal
-
-- `blockchain.json` — arquivo que armazena os blocos minerados e as transações.  
-- `consultar_saldo.py` — script para consultar saldo de qualquer carteira.  
-- `minerar_em_sequencia.py` — minera vários blocos em sequência de forma automática.  
-- `minerar_continuo.py` — minerador contínuo que gera blocos infinitamente até parar.  
-- `transferir.py` — realiza transferências de TiBúrcio entre carteiras com validação de saldo.
+> ⚡ **“Luz onde há trevas. Perdão onde há ódio. Fé onde há dúvida.”** ⚡
 
 ---
 
-## ⚙️ Como usar
+## ✨ Sobre o projeto
 
-### 1. Clonar repositório (se ainda não clonou)
+O **Tibúrcio** é uma blockchain independente, **não vinculada a Solana, Ethereum ou outras redes**.
+
+- ✅ **Totalmente descentralizada**
+- ✅ **Minerável diretamente do seu celular (via Termux)**
+- ✅ **Sem necessidade de investimento inicial**
+- ✅ **100% comunitária e espiritual**
+
+---
+
+## 📦 Funcionalidades atuais
+
+- ⛏️ **Minerador automático**
+- 💰 **Consulta de saldo**
+- 🔁 **Transferência de tokens entre carteiras**
+- 🔐 **Arquivo pessoal `blockchain.json` para registro da blockchain**
+
+---
+
+## ⚙️ Como começar
+
+### 📲 Instalação via Termux (Android)
 
 ```bash
+# Atualizar pacotes
+pkg update && pkg upgrade -y
+
+# Instalar Python
+pkg install python -y
+
+# Clonar o repositório da blockchain
 git clone https://github.com/Mestrie1/tiburcio-blockchain.git
 cd tiburcio-blockchain
