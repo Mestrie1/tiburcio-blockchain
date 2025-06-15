@@ -38,7 +38,7 @@ def criar_bloco(novo_index, anterior_hash):
     bloco['hash'] = calcular_hash_bloco(bloco)
     return bloco
 
-def minerar():
+def minerar_continuamente():
     blockchain = carregar_blockchain()
     if blockchain:
         ultimo_bloco = blockchain[-1]
@@ -48,10 +48,14 @@ def minerar():
         novo_index = 0
         anterior_hash = '0'
 
-    novo_bloco = criar_bloco(novo_index, anterior_hash)
-    blockchain.append(novo_bloco)
-    salvar_blockchain(blockchain)
-    print(f'Novo bloco #{novo_index} minerado com recompensa de {RECOMPENSA_MINERACAO} TiBúrcio!')
+    while True:
+        novo_bloco = criar_bloco(novo_index, anterior_hash)
+        blockchain.append(novo_bloco)
+        salvar_blockchain(blockchain)
+        print(f'✅ Novo bloco #{novo_index} minerado com recompensa de {RECOMPENSA_MINERACAO} TiBúrcio!')
+        novo_index += 1
+        anterior_hash = novo_bloco['hash']
+        time.sleep(1)  # Tempo entre blocos (1 segundo). Pode ajustar aqui.
 
 if __name__ == '__main__':
-    minerar()
+    minerar_continuamente()
