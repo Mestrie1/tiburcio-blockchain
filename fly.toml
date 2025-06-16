@@ -1,0 +1,28 @@
+app = "nome-do-seu-app"  # substitua pelo nome que você deu ao app no Fly.io
+
+[build]
+  image = "python:3.11-slim"  # ou use Dockerfile se preferir
+
+[env]
+  PORT = "5000"
+
+[deploy]
+  release_command = "python p2p_server.py"
+
+[experimental]
+  allowed_public_ports = [5000]
+  auto_rollback = true
+
+[[services]]
+  internal_port = 5000
+  protocol = "tcp"
+
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+
+  [[services.ports]]
+    port = 80
+
+  [[services.ports]]
+    port = 443
