@@ -1,28 +1,18 @@
-app = "nome-do-seu-app"  # substitua pelo nome que você deu ao app no Fly.io
+app = "tiburcio-blockchain"
+
+# Região onde o app será hospedado, ex: gru (São Paulo)
+region = "gru"
 
 [build]
-  image = "python:3.11-slim"  # ou use Dockerfile se preferir
-
-[env]
-  PORT = "5000"
+  # Usaremos o Dockerfile para construir a imagem
+  dockerfile = "Dockerfile"
 
 [deploy]
-  release_command = "python p2p_server.py"
+  # Comando para rodar depois do deploy (opcional)
+  # Podemos deixar vazio ou ajustar se precisar
+  release_command = ""
 
-[experimental]
-  allowed_public_ports = [5000]
-  auto_rollback = true
-
-[[services]]
-  internal_port = 5000
-  protocol = "tcp"
-
-  [services.concurrency]
-    hard_limit = 25
-    soft_limit = 20
-
-  [[services.ports]]
-    port = 80
-
-  [[services.ports]]
-    port = 443
+[env]
+  # Variáveis de ambiente, se precisar colocar alguma
+  # EXEMPLO:
+  # MY_ENV_VAR = "value"
