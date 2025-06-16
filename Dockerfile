@@ -1,9 +1,11 @@
-FROM python:3.10-slim
+# Dockerfile para Tibúrcio Blockchain P2P
+FROM python:3.11-slim
 
 WORKDIR /app
+COPY . /app
 
-COPY . .
+RUN pip install --no-cache-dir -r requirements.txt || true
 
-RUN pip install --no-cache-dir flask
+EXPOSE 5000
 
 CMD ["python3", "p2p_server.py"]
