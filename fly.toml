@@ -1,18 +1,11 @@
 app = "tiburcio-blockchain"
 
-# Região onde o app será hospedado, ex: gru (São Paulo)
 region = "gru"
 
 [build]
-  # Usaremos o Dockerfile para construir a imagem
   dockerfile = "Dockerfile"
 
 [deploy]
-  # Comando para rodar depois do deploy (opcional)
-  # Podemos deixar vazio ou ajustar se precisar
   release_command = ""
 
 [env]
-  # Variáveis de ambiente, se precisar colocar alguma
-  # EXEMPLO:
-  # MY_ENV_VAR = "value"
