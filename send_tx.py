@@ -16,4 +16,3 @@ if __name__ == "__main__":
         "timestamp": 1234567890
     }
     send_transaction(tx)
-Adiciona script send_tx.py para envio de transações P2P
