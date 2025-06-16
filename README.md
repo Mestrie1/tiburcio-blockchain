@@ -41,4 +41,19 @@ pkg install python -y
 
 # Clonar o repositório da blockchain
 git clone https://github.com/Mestrie1/tiburcio-blockchain.git
-cd tiburcio-blockchain
+cd tiburcio-blockchain 
+---
+
+## ▶️ Como rodar o minerador e consultar saldo
+
+Após instalar e clonar o repositório, use os comandos abaixo para minerar e consultar saldo:
+
+```bash
+# Entre na pasta do projeto
+cd ~/tiburcio-blockchain
+
+# Rodar o minerador para iniciar a mineração
+python3 minerar.py
+
+# Consultar saldo de uma carteira
+python3 consultar_saldo.py
