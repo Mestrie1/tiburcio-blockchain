@@ -53,7 +53,8 @@ Após instalar e clonar o repositório, use os comandos abaixo para minerar e co
 cd ~/tiburcio-blockchain
 
 # Rodar o minerador para iniciar a mineração
-python3 minerar.py
+
+python3 minerador.py
 
 # Consultar saldo de uma carteira
 python3 consultar_saldo.py
