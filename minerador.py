@@ -119,7 +119,9 @@ def minerar_bloco(transacoes, endereco_minerador, blockchain):
     return bloco
 
 def main():
-    endereco_minerador = input("Digite seu endereço de carteira para receber recompensas: ").strip()
+    # Endereço fixo do minerador para deploy
+    endereco_minerador = "wjkg42GwXUNsspnPNJ7L8qZJo3sBt8NWWrKG7TAKwpJF8KYaM"
+
     blockchain = carregar_blockchain()
     print(f"Blockchain carregada com {len(blockchain)} blocos.\n")
 
@@ -131,7 +133,7 @@ def main():
             print(f"Saldo atual do minerador ({endereco_minerador}): {saldo} TiBúrcio\n")
         except Exception as e:
             print(f"Erro ao minerar: {e}")
-            time.sleep(5)  # Espera 5 segundos e tenta novamente
+            time.sleep(5)
 
 if __name__ == "__main__":
     main()
