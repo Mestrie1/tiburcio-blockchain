@@ -6,11 +6,9 @@ import os
 
 app = Flask(__name__)
 
-# Nome do arquivo de saldos
 SALDO_FILE = "saldos.json"
 ENDERECO_MINERADOR = "wjkg42GwXUNsspnPNJ7L8qZJo3sBt8NWWrKG7TAKwpJF8KYaM"
 
-# Função para carregar saldos
 def carregar_saldos():
     if os.path.exists(SALDO_FILE):
         with open(SALDO_FILE, "r") as f:
@@ -18,7 +16,6 @@ def carregar_saldos():
     else:
         return {}
 
-# Função para salvar saldos
 def salvar_saldos(saldos):
     with open(SALDO_FILE, "w") as f:
         json.dump(saldos, f)
@@ -37,12 +34,8 @@ def main():
         time.sleep(3)
         print(f"💎 Bloco {bloco_atual} minerado! Recompensa: {recompensa} TiBúrcio")
 
-        # Atualiza saldo
         saldos = carregar_saldos()
-        if ENDERECO_MINERADOR in saldos:
-            saldos[ENDERECO_MINERADOR] += recompensa
-        else:
-            saldos[ENDERECO_MINERADOR] = recompensa
+        saldos[ENDERECO_MINERADOR] = saldos.get(ENDERECO_MINERADOR, 0) + recompensa
         salvar_saldos(saldos)
 
         bloco_atual += 1
