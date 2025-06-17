@@ -1,77 +1,57 @@
-import json
-import hashlib
-import time
-import threading
 from flask import Flask
+import threading
+import time
+import json
+import os
 
 app = Flask(__name__)
 
-# Configurações iniciais
-blockchain_file = "blockchain.json"
-carteira_destino = "wjkg42GwXUNsspnPNJ7L8qZJo3sBt8NWWrKG7TAKwpJF8KYaM"
-recompensa = 50
-dificuldade = 4  # Pode aumentar depois para dificultar mais a mineração
+# Nome do arquivo de saldos
+SALDO_FILE = "saldos.json"
+ENDERECO_MINERADOR = "wjkg42GwXUNsspnPNJ7L8qZJo3sBt8NWWrKG7TAKwpJF8KYaM"
 
-# Função para carregar ou criar a blockchain
-def carregar_blockchain():
-    try:
-        with open(blockchain_file, "r") as f:
+# Função para carregar saldos
+def carregar_saldos():
+    if os.path.exists(SALDO_FILE):
+        with open(SALDO_FILE, "r") as f:
             return json.load(f)
-    except FileNotFoundError:
-        bloco_genesis = {
-            "index": 0,
-            "timestamp": time.time(),
-            "transactions": [],
-            "previous_hash": "0",
-            "nonce": 0,
-            "hash": "0"
-        }
-        with open(blockchain_file, "w") as f:
-            json.dump([bloco_genesis], f, indent=4)
-        return [bloco_genesis]
+    else:
+        return {}
 
-# Função para salvar blockchain
-def salvar_blockchain(blockchain):
-    with open(blockchain_file, "w") as f:
-        json.dump(blockchain, f, indent=4)
+# Função para salvar saldos
+def salvar_saldos(saldos):
+    with open(SALDO_FILE, "w") as f:
+        json.dump(saldos, f)
 
-# Função de prova de trabalho
-def prova_de_trabalho(bloco, dificuldade):
-    prefixo = "0" * dificuldade
-    while True:
-        bloco["nonce"] += 1
-        bloco_serializado = json.dumps(bloco, sort_keys=True).encode()
-        hash_bloco = hashlib.sha256(bloco_serializado).hexdigest()
-        if hash_bloco.startswith(prefixo):
-            bloco["hash"] = hash_bloco
-            return bloco
-
-# Função de mineração
-def minerar():
-    blockchain = carregar_blockchain()
-    while True:
-        ultimo_bloco = blockchain[-1]
-        novo_bloco = {
-            "index": ultimo_bloco["index"] + 1,
-            "timestamp": time.time(),
-            "transactions": [{"to": carteira_destino, "amount": recompensa}],
-            "previous_hash": ultimo_bloco["hash"],
-            "nonce": 0,
-            "hash": ""
-        }
-        bloco_validado = prova_de_trabalho(novo_bloco, dificuldade)
-        blockchain.append(bloco_validado)
-        salvar_blockchain(blockchain)
-        print(f"💎 Bloco {bloco_validado['index']} minerado! Recompensa: {recompensa} TiBúrcio")
-
-# Rota web para ver status
 @app.route("/")
 def home():
-    return "Minerador Tibúrcio rodando. Blocos minerados são salvos em blockchain.json."
+    return "Minerador Tibúrcio está online!"
 
-# Iniciar o minerador em paralelo com o servidor Flask
+def main():
+    bloco_atual = 0
+    dificuldade = 5
+    recompensa = 50
+
+    while True:
+        print(f"💎 Minerando bloco {bloco_atual} com dificuldade {dificuldade}...")
+        time.sleep(3)
+        print(f"💎 Bloco {bloco_atual} minerado! Recompensa: {recompensa} TiBúrcio")
+
+        # Atualiza saldo
+        saldos = carregar_saldos()
+        if ENDERECO_MINERADOR in saldos:
+            saldos[ENDERECO_MINERADOR] += recompensa
+        else:
+            saldos[ENDERECO_MINERADOR] = recompensa
+        salvar_saldos(saldos)
+
+        bloco_atual += 1
+
+def rodar_minerador():
+    main()
+
 if __name__ == "__main__":
-    t = threading.Thread(target=minerar)
-    t.daemon = True
-    t.start()
+    minerador_thread = threading.Thread(target=rodar_minerador)
+    minerador_thread.daemon = True
+    minerador_thread.start()
     app.run(host="0.0.0.0", port=10000)
