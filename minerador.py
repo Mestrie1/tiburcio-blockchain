@@ -11,13 +11,12 @@ def carregar_blockchain():
         with open(BLOCKCHAIN_FILE, "r") as f:
             return json.load(f)
     except:
-        # Se não existir, cria o bloco gênesis
         bloco_genesis = {
             "indice": 0,
             "transacoes": [
                 {
                     "de": "RECOMPENSA",
-                    "para": "endereco_genesis",  # Mude para seu endereço
+                    "para": "endereco_genesis",
                     "quantidade": RECOMPENSA_MINERADOR
                 }
             ],
@@ -77,7 +76,6 @@ def minerar_bloco(endereco_minerador):
     blockchain = carregar_blockchain()
     transacoes_pendentes = carregar_transacoes_pendentes()
 
-    # Adicionar transação de recompensa para minerador
     transacoes_pendentes.append({
         "de": "RECOMPENSA",
         "para": endereco_minerador,
@@ -91,14 +89,11 @@ def minerar_bloco(endereco_minerador):
 
     blockchain.append(novo_bloco)
     salvar_blockchain(blockchain)
-
-    # Limpar transações pendentes
     salvar_transacoes_pendentes([])
 
-    print(f"Bloco {novo_indice} minerado com sucesso! Hash: {novo_bloco['hash']}")
+    print(f"✅ Bloco {novo_indice} minerado! Hash: {novo_bloco['hash']}")
 
 if __name__ == "__main__":
     endereco = input("Digite seu endereço para receber a recompensa: ").strip()
     while True:
         minerar_bloco(endereco)
-
