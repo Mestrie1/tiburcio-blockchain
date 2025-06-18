@@ -1,67 +1,50 @@
-import requests
 import hashlib
 import json
+import requests
 import time
 
-URL_SERVIDOR = 'https://tiburcio-blockchain-10.onrender.com'  # URL do seu projeto no Render
+NODE_URL = 'http://127.0.0.1:8081'
+CARTEIRA_MINERADOR = 'wjkg42GwXUNsspnPNJ7L8qZJo3sBt8NWWrKG7TAKwpJF8KYaM'
+RECOMPENSA_MINERACAO = 50  # Valor da recompensa por bloco minerado
 
-def calcular_hash(bloco):
-    bloco_codificado = json.dumps(bloco, sort_keys=True).encode()
-    return hashlib.sha256(bloco_codificado).hexdigest()
+def hash_bloco(bloco):
+    bloco_string = json.dumps(bloco, sort_keys=True).encode()
+    return hashlib.sha256(bloco_string).hexdigest()
 
-def minerar_bloco(transacoes, indice, hash_anterior, dificuldade):
+def minerar_bloco(transacoes, dificuldade=4):
     nonce = 0
+    prefixo_alvo = '0' * dificuldade
     while True:
         bloco = {
-            'indice': indice,
-            'timestamp': time.time(),
-            'transacoes': transacoes,
             'nonce': nonce,
-            'hash_anterior': hash_anterior
+            'transacoes': transacoes,
+            'timestamp': time.time()
         }
-        hash_bloco = calcular_hash(bloco)
-        if hash_bloco.startswith('0' * dificuldade):
-            return bloco, hash_bloco
+        hash_do_bloco = hash_bloco(bloco)
+        if hash_do_bloco.startswith(prefixo_alvo):
+            bloco['hash'] = hash_do_bloco
+            return bloco
         nonce += 1
 
-def obter_blockchain():
-    try:
-        resposta = requests.get(f'{URL_SERVIDOR}/blockchain')
-        if resposta.status_code == 200:
-            return resposta.json()
-        else:
-            print('❌ Erro ao obter blockchain do servidor.')
-            return None
-    except Exception as e:
-        print(f'❌ Erro de conexão: {e}')
-        return None
+def minerador():
+    print("⚙️ Mineração iniciada...")
+    response = requests.get(f"{NODE_URL}/pendentes")
+    transacoes = response.json()
 
-def enviar_bloco(bloco):
-    try:
-        resposta = requests.post(f'{URL_SERVIDOR}/novo_bloco', json=bloco)
-        if resposta.status_code == 200:
-            print('✅ Bloco adicionado à blockchain!')
-        else:
-            print('❌ Erro ao enviar bloco.')
-    except Exception as e:
-        print(f'❌ Erro de conexão ao enviar bloco: {e}')
+    # ⏺️ Adiciona transação de recompensa para o minerador
+    transacoes.append({
+        'remetente': 'RECOMPENSA',
+        'destinatario': CARTEIRA_MINERADOR,
+        'quantidade': RECOMPENSA_MINERACAO,
+        'assinatura': ''
+    })
 
-def minerar():
-    blockchain = obter_blockchain()
-    if not blockchain:
-        return
-
-    ultimo_bloco = blockchain[-1]
-    indice = ultimo_bloco['indice'] + 1
-    hash_anterior = ultimo_bloco['hash']
-    transacoes = [{"de": "minerador", "para": "Você", "quantidade": 1}]
-    dificuldade = 4  # Aumente se quiser mais dificuldade
-
-    print('⚙️  Mineração iniciada...')
-    bloco, hash_bloco = minerar_bloco(transacoes, indice, hash_anterior, dificuldade)
-    bloco['hash'] = hash_bloco
-    enviar_bloco(bloco)
+    bloco = minerar_bloco(transacoes)
+    resposta = requests.post(f"{NODE_URL}/receber_bloco", json=bloco)
+    if resposta.status_code == 201:
+        print(f"✅ Bloco minerado e enviado com sucesso! +{RECOMPENSA_MINERACAO} Tibúrcio ganhos.")
+    else:
+        print(f"Erro ao enviar bloco: {resposta.status_code} {resposta.text}")
 
 if __name__ == '__main__':
-    while True:
-        minerar()
+    minerador()

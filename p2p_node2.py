@@ -1,30 +1,22 @@
 import socket
-import threading
 import json
 import time
 
-HOST = '0.0.0.0'
-PORT = 5001
+def send_transaction(tx, ip='srv-d18drfp5pdvs73cue7gg.onrender.com', port=5001):  # porta 5001
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((ip, port))
+        s.send(json.dumps(tx).encode())
+        s.close()
+        print("Transação enviada:", tx)
+    except Exception as e:
+        print("Erro ao enviar transação:", e)
 
-peers = [
-    ('127.0.0.1', 5000),
-]
-
-blockchain = []
-
-def handle_client(conn, addr):
-    # código para tratar conexões recebidas
-    pass
-
-def start_server():
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((HOST, PORT))
-    server.listen()
-    print(f"Nó P2P ouvindo em {HOST}:{PORT}")
-    while True:
-        conn, addr = server.accept()
-        threading.Thread(target=handle_client, args=(conn, addr)).start()
-
-if __name__ == '__main__':
-    start_server()
-
+if __name__ == "__main__":
+    tx = {
+        "sender": "wjkg42GwXUNsspnPNJ7L8qZJo3sBt8NWWrKG7TAKwpJF8KYaM",
+        "recipient": "2ZaDcYVC9YmPZzLMLqiL4BxiesGBKuPdn1Go5oM16N2RE8N6X9",
+        "amount": 10,
+        "timestamp": int(time.time())
+    }
+    send_transaction(tx)
