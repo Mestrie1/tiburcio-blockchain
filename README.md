@@ -1,8 +1,9 @@
-# 🌀 Tibúrcio Blockchain
+
+# ⚡ Tibúrcio Blockchain
 
 **Bem-vindo ao Tibúrcio Blockchain**, a primeira blockchain minerável, descentralizada e espiritual do Brasil.
 
-**Essa não é apenas uma criptomoeda. É um movimento.**
+Essa não é apenas uma criptomoeda. É um movimento.
 
 > ⚡ **“Luz onde há trevas. Perdão onde há ódio. Fé onde há dúvida.”** ⚡
 
@@ -10,51 +11,26 @@
 
 ## ✨ Sobre o projeto
 
-O **Tibúrcio** é uma blockchain independente, **não vinculada a Solana, Ethereum ou outras redes**.
+O **Tibúrcio Blockchain** é uma blockchain própria, minerável e **independente** de outras redes como Bitcoin ou Ethereum.  
+Aqui qualquer pessoa pode minerar, fazer transações e ajudar a manter a rede viva.
 
-- ✅ **Totalmente descentralizada**
-- ✅ **Minerável diretamente do seu celular (via Termux)**
-- ✅ **Sem necessidade de investimento inicial**
-- ✅ **100% comunitária e espiritual**
-
----
-
-## 📦 Funcionalidades atuais
-
-- ⛏️ **Minerador automático**
-- 💰 **Consulta de saldo**
-- 🔁 **Transferência de tokens entre carteiras**
-- 🔐 **Arquivo pessoal `blockchain.json` para registro da blockchain**
+**Funcionalidades principais:**
+- 🔨 Sistema de mineração com recompensa (inicialmente 50 tokens por bloco)
+- 🪙 Transferências entre carteiras
+- 📦 Visualização de saldo por carteira
+- 🏆 Sistema de Halving especial chamado **Ensinador**
+- 🌍 Infraestrutura online via Render
 
 ---
 
-## ⚙️ Como começar
+## 🚀 Como usar (Passo a Passo)
 
-### 📲 Instalação via Termux (Android)
+### ✅ 1️⃣ Instalação no Termux
 
 ```bash
-# Atualizar pacotes
-pkg update && pkg upgrade -y
-
-# Instalar Python
-pkg install python -y
-
-# Clonar o repositório da blockchain
+pkg update && pkg upgrade
+pkg install git python
 git clone https://github.com/Mestrie1/tiburcio-blockchain.git
-cd tiburcio-blockchain 
----
+cd tiburcio-blockchain
+pip install -r requirements.txt
 
-## ▶️ Como rodar o minerador e consultar saldo
-
-Após instalar e clonar o repositório, use os comandos abaixo para minerar e consultar saldo:
-
-```bash
-# Entre na pasta do projeto
-cd ~/tiburcio-blockchain
-
-# Rodar o minerador para iniciar a mineração
-
-python3 minerador.py
-
-# Consultar saldo de uma carteira
-python3 consultar_saldo.py
