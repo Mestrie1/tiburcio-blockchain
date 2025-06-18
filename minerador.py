@@ -4,8 +4,12 @@ import hashlib
 
 BLOCKCHAIN_FILE = "blockchain.json"
 TRANSACOES_PENDENTES_FILE = "transacoes_pendentes.json"
-RECOMPENSA_MINERADOR = 50  # Pode ajustar
-DIFICULDADE = 4  # Pode ajustar para mineração mais difícil ou fácil
+
+RECOMPENSA_INICIAL = 50
+INTERVALO_HALVING = 210000  # Ajuste conforme desejar
+SUPPLY_MAXIMO = 21000000  # Total máximo de tokens a serem minerados
+
+DIFICULDADE = 4  # Ajuste para mineração mais fácil ou difícil
 
 def carregar_blockchain():
     try:
@@ -66,30 +70,53 @@ def criar_bloco(transacoes, hash_anterior, indice):
     bloco = prova_de_trabalho(bloco)
     return bloco
 
+def calcular_recompensa(indice_bloco):
+    halvings = indice_bloco // INTERVALO_HALVING
+    recompensa = RECOMPENSA_INICIAL // (2 ** halvings)
+    if recompensa < 1:
+        recompensa = 1  # recompensa mínima
+    return recompensa
+
+def calcular_total_minerado(blockchain):
+    total = 0
+    for bloco in blockchain:
+        for tx in bloco["transacoes"]:
+            if tx["de"] == "RECOMPENSA":
+                total += tx["quantidade"]
+    return total
+
 def minerar_bloco(endereco_minerador):
     blockchain = carregar_blockchain()
     transacoes_pendentes = carregar_transacoes_pendentes()
 
-    transacoes_pendentes.append({
-        "de": "RECOMPENSA",
-        "para": endereco_minerador,
-        "quantidade": RECOMPENSA_MINERADOR
-    })
-
     ultimo_bloco = blockchain[-1]
     novo_indice = ultimo_bloco["indice"] + 1
 
-    novo_bloco = criar_bloco(transacoes_pendentes, ultimo_bloco["hash"], novo_indice)
+    total_minerado = calcular_total_minerado(blockchain)
+    recompensa_atual = calcular_recompensa(novo_indice)
 
+    if total_minerado + recompensa_atual > SUPPLY_MAXIMO:
+        recompensa_atual = SUPPLY_MAXIMO - total_minerado
+        if recompensa_atual <= 0:
+            print("💰 Supply máximo alcançado! Não há mais recompensas.")
+            recompensa_atual = 0
+
+    if recompensa_atual > 0:
+        transacoes_pendentes.append({
+            "de": "RECOMPENSA",
+            "para": endereco_minerador,
+            "quantidade": recompensa_atual
+        })
+
+    novo_bloco = criar_bloco(transacoes_pendentes, ultimo_bloco["hash"], novo_indice)
     blockchain.append(novo_bloco)
     salvar_blockchain(blockchain)
-
     salvar_transacoes_pendentes([])
 
-    print(f"✅ Bloco {novo_indice} minerado com sucesso! Hash: {novo_bloco['hash']}")
+    print(f"✅ Bloco {novo_indice} minerado com sucesso! Recompensa: {recompensa_atual} tokens. Hash: {novo_bloco['hash']}")
 
 if __name__ == "__main__":
     endereco = input("Digite seu endereço para receber as recompensas: ").strip()
     while True:
         minerar_bloco(endereco)
-        time.sleep(1)  # Pequena pausa para evitar loop muito rápido
+        
