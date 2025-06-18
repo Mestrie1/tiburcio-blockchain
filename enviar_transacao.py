@@ -1,45 +1,35 @@
-import ecdsa
-import hashlib
 import json
-import requests
+import time
 
-# Dados da transação
-remetente = "wjkg42GwXUNsspnPNJ7L8qZJo3sBt8NWWrKG7TAKwpJF8KYaM"
-destinatario = "6cfbbc026bcc5af04604dae3197e11b9ccc1a907"
-quantidade = 10  # Pode alterar para a quantidade que quiser
+TRANSACOES_PENDENTES = "transacoes_pendentes.json"
 
-# Sua chave privada hex (guarde em segredo)
-chave_privada_hex = "3686e0565bb9aa36846cd956022c1fdbb7ec26f4f92213ac1ea8155551c40584"
+def carregar_transacoes_pendentes():
+    try:
+        with open(TRANSACOES_PENDENTES, "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
 
-def assinar_transacao(remetente, destinatario, quantidade, chave_privada_hex):
-    tx = {
-        "remetente": remetente,
-        "destinatario": destinatario,
-        "quantidade": quantidade
+def salvar_transacoes_pendentes(transacoes):
+    with open(TRANSACOES_PENDENTES, "w") as f:
+        json.dump(transacoes, f, indent=4)
+
+def criar_transacao(de, para, quantidade):
+    return {
+        "de": de,
+        "para": para,
+        "quantidade": quantidade,
+        "timestamp": time.time()
     }
-    # Serializa transação ordenando chaves para assinatura consistente
-    tx_json = json.dumps(tx, sort_keys=True).encode()
-    sk = ecdsa.SigningKey.from_string(bytes.fromhex(chave_privada_hex), curve=ecdsa.SECP256k1)
-    assinatura = sk.sign(tx_json).hex()
-    return assinatura, tx
 
-assinatura, tx = assinar_transacao(remetente, destinatario, quantidade, chave_privada_hex)
+if __name__ == "__main__":
+    endereco_de = input("Endereço da carteira remetente: ").strip()
+    endereco_para = input("Endereço da carteira destinatária: ").strip()
+    quantidade = float(input("Quantidade a transferir: "))
 
-# Transação completa com assinatura
-transacao_assinada = {
-    "remetente": remetente,
-    "destinatario": destinatario,
-    "quantidade": quantidade,
-    "assinatura": assinatura
-}
+    transacoes = carregar_transacoes_pendentes()
+    transacao = criar_transacao(endereco_de, endereco_para, quantidade)
+    transacoes.append(transacao)
+    salvar_transacoes_pendentes(transacoes)
 
-print("Transação assinada pronta para enviar:")
-print(json.dumps(transacao_assinada, indent=2))
-
-# Envia para seu servidor local (ajuste IP e porta se precisar)
-url = "http://127.0.0.1:8081/nova_transacao"
-response = requests.post(url, json=transacao_assinada)
-
-print("Resposta do servidor:")
-print(response.status_code, response.text)
-
+    print("Transação criada e adicionada às pendentes com sucesso!")

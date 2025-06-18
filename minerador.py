@@ -1,50 +1,104 @@
-import hashlib
 import json
-import requests
 import time
+import hashlib
 
-NODE_URL = 'http://127.0.0.1:8081'
-CARTEIRA_MINERADOR = 'wjkg42GwXUNsspnPNJ7L8qZJo3sBt8NWWrKG7TAKwpJF8KYaM'
-RECOMPENSA_MINERACAO = 50  # Valor da recompensa por bloco minerado
+BLOCKCHAIN_FILE = "blockchain.json"
+TRANSACOES_PENDENTES_FILE = "transacoes_pendentes.json"
+RECOMPENSA_MINERADOR = 50  # Pode ajustar
 
-def hash_bloco(bloco):
-    bloco_string = json.dumps(bloco, sort_keys=True).encode()
-    return hashlib.sha256(bloco_string).hexdigest()
-
-def minerar_bloco(transacoes, dificuldade=4):
-    nonce = 0
-    prefixo_alvo = '0' * dificuldade
-    while True:
-        bloco = {
-            'nonce': nonce,
-            'transacoes': transacoes,
-            'timestamp': time.time()
+def carregar_blockchain():
+    try:
+        with open(BLOCKCHAIN_FILE, "r") as f:
+            return json.load(f)
+    except:
+        # Se não existir, cria o bloco gênesis
+        bloco_genesis = {
+            "indice": 0,
+            "transacoes": [
+                {
+                    "de": "RECOMPENSA",
+                    "para": "endereco_genesis",  # Mude para seu endereço
+                    "quantidade": RECOMPENSA_MINERADOR
+                }
+            ],
+            "anterior": "0"*64,
+            "nonce": 0,
+            "timestamp": time.time(),
+            "hash": ""
         }
-        hash_do_bloco = hash_bloco(bloco)
-        if hash_do_bloco.startswith(prefixo_alvo):
-            bloco['hash'] = hash_do_bloco
+        bloco_genesis["hash"] = calcular_hash(bloco_genesis)
+        salvar_blockchain([bloco_genesis])
+        return [bloco_genesis]
+
+def salvar_blockchain(blockchain):
+    with open(BLOCKCHAIN_FILE, "w") as f:
+        json.dump(blockchain, f, indent=4)
+
+def carregar_transacoes_pendentes():
+    try:
+        with open(TRANSACOES_PENDENTES_FILE, "r") as f:
+            return json.load(f)
+    except:
+        return []
+
+def salvar_transacoes_pendentes(transacoes):
+    with open(TRANSACOES_PENDENTES_FILE, "w") as f:
+        json.dump(transacoes, f, indent=4)
+
+def calcular_hash(bloco):
+    bloco_copy = dict(bloco)
+    bloco_copy.pop("hash", None)
+    bloco_str = json.dumps(bloco_copy, sort_keys=True).encode()
+    return hashlib.sha256(bloco_str).hexdigest()
+
+def prova_de_trabalho(bloco, dificuldade=4):
+    bloco["nonce"] = 0
+    prefixo = "0" * dificuldade
+    while True:
+        bloco["hash"] = calcular_hash(bloco)
+        if bloco["hash"].startswith(prefixo):
             return bloco
-        nonce += 1
+        else:
+            bloco["nonce"] += 1
 
-def minerador():
-    print("⚙️ Mineração iniciada...")
-    response = requests.get(f"{NODE_URL}/pendentes")
-    transacoes = response.json()
+def criar_bloco(transacoes, hash_anterior, indice):
+    bloco = {
+        "indice": indice,
+        "transacoes": transacoes,
+        "anterior": hash_anterior,
+        "nonce": 0,
+        "timestamp": time.time(),
+        "hash": ""
+    }
+    bloco = prova_de_trabalho(bloco)
+    return bloco
 
-    # ⏺️ Adiciona transação de recompensa para o minerador
-    transacoes.append({
-        'remetente': 'RECOMPENSA',
-        'destinatario': CARTEIRA_MINERADOR,
-        'quantidade': RECOMPENSA_MINERACAO,
-        'assinatura': ''
+def minerar_bloco(endereco_minerador):
+    blockchain = carregar_blockchain()
+    transacoes_pendentes = carregar_transacoes_pendentes()
+
+    # Adicionar transação de recompensa para minerador
+    transacoes_pendentes.append({
+        "de": "RECOMPENSA",
+        "para": endereco_minerador,
+        "quantidade": RECOMPENSA_MINERADOR
     })
 
-    bloco = minerar_bloco(transacoes)
-    resposta = requests.post(f"{NODE_URL}/receber_bloco", json=bloco)
-    if resposta.status_code == 201:
-        print(f"✅ Bloco minerado e enviado com sucesso! +{RECOMPENSA_MINERACAO} Tibúrcio ganhos.")
-    else:
-        print(f"Erro ao enviar bloco: {resposta.status_code} {resposta.text}")
+    ultimo_bloco = blockchain[-1]
+    novo_indice = ultimo_bloco["indice"] + 1
 
-if __name__ == '__main__':
-    minerador()
+    novo_bloco = criar_bloco(transacoes_pendentes, ultimo_bloco["hash"], novo_indice)
+
+    blockchain.append(novo_bloco)
+    salvar_blockchain(blockchain)
+
+    # Limpar transações pendentes
+    salvar_transacoes_pendentes([])
+
+    print(f"Bloco {novo_indice} minerado com sucesso! Hash: {novo_bloco['hash']}")
+
+if __name__ == "__main__":
+    endereco = input("Digite seu endereço para receber a recompensa: ").strip()
+    while True:
+        minerar_bloco(endereco)
+
