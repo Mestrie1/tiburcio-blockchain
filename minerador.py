@@ -5,6 +5,7 @@ import hashlib
 BLOCKCHAIN_FILE = "blockchain.json"
 TRANSACOES_PENDENTES_FILE = "transacoes_pendentes.json"
 RECOMPENSA_MINERADOR = 50  # Pode ajustar
+DIFICULDADE = 4  # Pode ajustar para mineração mais difícil ou fácil
 
 def carregar_blockchain():
     try:
@@ -13,13 +14,7 @@ def carregar_blockchain():
     except:
         bloco_genesis = {
             "indice": 0,
-            "transacoes": [
-                {
-                    "de": "RECOMPENSA",
-                    "para": "endereco_genesis",
-                    "quantidade": RECOMPENSA_MINERADOR
-                }
-            ],
+            "transacoes": [],
             "anterior": "0"*64,
             "nonce": 0,
             "timestamp": time.time(),
@@ -50,15 +45,14 @@ def calcular_hash(bloco):
     bloco_str = json.dumps(bloco_copy, sort_keys=True).encode()
     return hashlib.sha256(bloco_str).hexdigest()
 
-def prova_de_trabalho(bloco, dificuldade=4):
+def prova_de_trabalho(bloco):
     bloco["nonce"] = 0
-    prefixo = "0" * dificuldade
+    prefixo = "0" * DIFICULDADE
     while True:
         bloco["hash"] = calcular_hash(bloco)
         if bloco["hash"].startswith(prefixo):
             return bloco
-        else:
-            bloco["nonce"] += 1
+        bloco["nonce"] += 1
 
 def criar_bloco(transacoes, hash_anterior, indice):
     bloco = {
@@ -89,11 +83,12 @@ def minerar_bloco(endereco_minerador):
 
     blockchain.append(novo_bloco)
     salvar_blockchain(blockchain)
+
     salvar_transacoes_pendentes([])
 
-    print(f"✅ Bloco {novo_indice} minerado! Hash: {novo_bloco['hash']}")
+    print(f"✅ Bloco {novo_indice} minerado com sucesso! Hash: {novo_bloco['hash']}")
 
 if __name__ == "__main__":
-    endereco = input("Digite seu endereço para receber a recompensa: ").strip()
+    endereco = input("Digite seu endereço para receber as recompensas: ").strip()
     while True:
         minerar_bloco(endereco)
