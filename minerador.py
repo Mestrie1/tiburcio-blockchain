@@ -92,3 +92,4 @@ if __name__ == "__main__":
     endereco = input("Digite seu endereço para receber as recompensas: ").strip()
     while True:
         minerar_bloco(endereco)
+        time.sleep(1)  # Pequena pausa para evitar loop muito rápido
