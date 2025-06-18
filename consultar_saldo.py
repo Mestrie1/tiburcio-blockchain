@@ -1,27 +1,23 @@
 import json
 
-ARQUIVO_BLOCKCHAIN = "blockchain.json"
-
-def carregar_blockchain():
-    try:
-        with open(ARQUIVO_BLOCKCHAIN, "r") as f:
-            return json.load(f)
-    except:
-        return []
+BLOCKCHAIN_FILE = "blockchain.json"
 
 def consultar_saldo(endereco):
-    blockchain = carregar_blockchain()
     saldo = 0
-    for bloco in blockchain:
-        for tx in bloco["transacoes"]:
-            if tx["para"] == endereco:
-                saldo += tx["quantidade"]
-            if tx["de"] == endereco:
-                saldo -= tx["quantidade"]
+    try:
+        with open(BLOCKCHAIN_FILE, "r") as f:
+            blockchain = json.load(f)
+            for bloco in blockchain:
+                for tx in bloco["transacoes"]:
+                    if tx["de"] == endereco:
+                        saldo -= tx["quantidade"]
+                    if tx["para"] == endereco:
+                        saldo += tx["quantidade"]
+    except:
+        pass
     return saldo
 
 if __name__ == "__main__":
-    endereco = input("Digite o endereço da carteira para consultar saldo: ").strip()
+    endereco = input("Digite o endereço da carteira: ").strip()
     saldo = consultar_saldo(endereco)
-    print(f"Saldo da carteira {endereco}: {saldo} tokens")
-
+    print(f"💰 Saldo de {endereco}: {saldo} $Tiburcio")
