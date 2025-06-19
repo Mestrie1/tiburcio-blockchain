@@ -1,10 +1,7 @@
 import json
 import time
 import hashlib
-<<<<<<< HEAD
-=======
 import base64
->>>>>>> a34abea (Atualizações do minerador, servidor e envio de transações online)
 from ecdsa import VerifyingKey, SECP256k1, BadSignatureError
 
 BLOCKCHAIN_FILE = "blockchain.json"
@@ -14,19 +11,16 @@ RECOMPENSA_INICIAL = 50
 INTERVALO_HALVING = 210000
 SUPPLY_MAXIMO = 21000000
 DIFICULDADE = 4
-<<<<<<< HEAD
-=======
 
+# Defina aqui seu endereço público para receber recompensas:
 CARTEIRA_MINERADOR = "497f981404fb415023347cb62589652fa1d52f62eb00bcba07b3383b6721b294"
 
->>>>>>> a34abea (Atualizações do minerador, servidor e envio de transações online)
 
 def carregar_blockchain():
     try:
         with open(BLOCKCHAIN_FILE, "r") as f:
             return json.load(f)
     except:
-        # Cria bloco gênesis se não existir blockchain
         bloco_genesis = {
             "indice": 0,
             "transacoes": [],
@@ -75,21 +69,12 @@ def prova_de_trabalho(bloco):
             return bloco
         bloco["nonce"] += 1
 
-<<<<<<< HEAD
-def calcular_recompensa(indice_bloco):
-    halvings = indice_bloco // INTERVALO_HALVING
-    recompensa = RECOMPENSA_INICIAL // (2 ** halvings)
-    if recompensa < 1:
-        recompensa = 1
-    return recompensa
-=======
 
 def calcular_recompensa(indice_bloco):
     halvings = indice_bloco // INTERVALO_HALVING
     recompensa = RECOMPENSA_INICIAL // (2 ** halvings)
     return max(recompensa, 1)
 
->>>>>>> a34abea (Atualizações do minerador, servidor e envio de transações online)
 
 def calcular_total_minerado(blockchain):
     total = 0
@@ -133,21 +118,6 @@ def minerar_bloco():
 
     if total_minerado >= SUPPLY_MAXIMO:
         print("💰 Supply máximo alcançado! Não há mais recompensas.")
-<<<<<<< HEAD
-        return False
-
-    if total_minerado + recompensa_atual > SUPPLY_MAXIMO:
-        recompensa_atual = SUPPLY_MAXIMO - total_minerado
-
-    transacoes_validas = [tx for tx in transacoes_pendentes if validar_assinatura(tx)]
-
-    transacoes_validas.append({
-        "de": "RECOMPENSA",
-        "para": endereco_minerador,
-        "quantidade": recompensa_atual
-    })
-
-=======
         recompensa_atual = 0
     elif total_minerado + recompensa_atual > SUPPLY_MAXIMO:
         recompensa_atual = SUPPLY_MAXIMO - total_minerado
@@ -163,7 +133,6 @@ def minerar_bloco():
             "quantidade": recompensa_atual
         })
 
->>>>>>> a34abea (Atualizações do minerador, servidor e envio de transações online)
     novo_bloco = {
         "indice": novo_indice,
         "transacoes": transacoes_validas,
@@ -173,41 +142,6 @@ def minerar_bloco():
         "hash": ""
     }
 
-<<<<<<< HEAD
-    bloco_minerado = prova_de_trabalho(novo_bloco)
-    blockchain.append(bloco_minerado)
-    salvar_blockchain(blockchain)
-    salvar_transacoes_pendentes([])
-
-    print(f"✅ Bloco {novo_indice} minerado! Recompensa: {recompensa_atual} tokens. Hash: {bloco_minerado['hash']}")
-    return True
-
-def validar_assinatura(tx):
-    try:
-        remetente = tx["de"]
-        destinatario = tx["para"]
-        quantidade = tx["quantidade"]
-        assinatura_b64 = tx["assinatura"]
-        chave_publica_hex = tx["chave_publica"]
-
-        mensagem = f"remetente:{remetente};destinatario:{destinatario};quantidade:{quantidade}"
-        hash_mensagem = hashlib.sha256(mensagem.encode()).digest()
-
-        assinatura = base64.b64decode(assinatura_b64)
-        chave_publica_bytes = bytes.fromhex(chave_publica_hex)
-
-        vk = VerifyingKey.from_string(chave_publica_bytes, curve=SECP256k1)
-        vk.verify(assinatura, hash_mensagem)
-        return True
-    except:
-        return False
-
-if __name__ == "__main__":
-    print("=== Iniciando minerador do Tibúrcio Blockchain ===")
-    endereco = input("Digite seu endereço para receber as recompensas: ").strip()
-    while True:
-        minerar_bloco(endereco)
-=======
     print(f"🔨 Minerando bloco {novo_indice}...")
     bloco_minerado = prova_de_trabalho(novo_bloco)
 
@@ -222,5 +156,4 @@ if __name__ == "__main__":
     print("=== Iniciando minerador do Tibúrcio Blockchain ===")
     while True:
         minerar_bloco()
->>>>>>> a34abea (Atualizações do minerador, servidor e envio de transações online)
         time.sleep(2)
