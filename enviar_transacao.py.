@@ -1,0 +1,40 @@
+import hashlib
+import base64
+from ecdsa import SigningKey, SECP256k1
+
+# Sua chave privada hex (guarde bem!)
+chave_privada_hex = "406eff534d4366cb4a14301252f7a26db7cb29587457afb6ad42a3a25c637d74"
+
+# Converte para bytes e cria o objeto de assinatura
+chave_privada_bytes = bytes.fromhex(chave_privada_hex)
+sk = SigningKey.from_string(chave_privada_bytes, curve=SECP256k1)
+
+# Dados da transação
+remetente = "497f981404fb415023347cb62589652fa1d52f62eb00bcba07b3383b6721b294"
+destinatario = "ENDERECO_DESTINO_AQUI"
+quantidade = 10  # exemplo
+
+# Monta a mensagem para assinar (mesmo formato do app)
+mensagem = f"remetente:{remetente};destinatario:{destinatario};quantidade:{quantidade}"
+hash_mensagem = hashlib.sha256(mensagem.encode()).digest()
+
+# Assina
+assinatura = sk.sign(hash_mensagem)
+
+# Codifica a assinatura em base64 para enviar
+assinatura_b64 = base64.b64encode(assinatura).decode()
+
+# Chave pública para enviar (pode extrair da chave privada)
+chave_publica = sk.get_verifying_key()
+chave_publica_hex = chave_publica.to_string().hex()
+
+# Monta JSON para enviar na requisição POST /transferir
+transacao_json = {
+    "de": remetente,
+    "para": destinatario,
+    "quantidade": quantidade,
+    "assinatura": assinatura_b64,
+    "chave_publica": chave_publica_hex
+}
+
+print(transacao_json)
