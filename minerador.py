@@ -1,15 +1,15 @@
 import json
 import time
 import hashlib
+from ecdsa import VerifyingKey, SECP256k1, BadSignatureError
 
 BLOCKCHAIN_FILE = "blockchain.json"
 TRANSACOES_PENDENTES_FILE = "transacoes_pendentes.json"
 
 RECOMPENSA_INICIAL = 50
-INTERVALO_HALVING = 210000  # Ajuste conforme desejar
-SUPPLY_MAXIMO = 21000000  # Total máximo de tokens a serem minerados
-
-DIFICULDADE = 4  # Ajuste para mineração mais fácil ou difícil
+INTERVALO_HALVING = 210000
+SUPPLY_MAXIMO = 21000000
+DIFICULDADE = 4
 
 def carregar_blockchain():
     try:
@@ -58,23 +58,11 @@ def prova_de_trabalho(bloco):
             return bloco
         bloco["nonce"] += 1
 
-def criar_bloco(transacoes, hash_anterior, indice):
-    bloco = {
-        "indice": indice,
-        "transacoes": transacoes,
-        "anterior": hash_anterior,
-        "nonce": 0,
-        "timestamp": time.time(),
-        "hash": ""
-    }
-    bloco = prova_de_trabalho(bloco)
-    return bloco
-
 def calcular_recompensa(indice_bloco):
     halvings = indice_bloco // INTERVALO_HALVING
     recompensa = RECOMPENSA_INICIAL // (2 ** halvings)
     if recompensa < 1:
-        recompensa = 1  # recompensa mínima
+        recompensa = 1
     return recompensa
 
 def calcular_total_minerado(blockchain):
@@ -95,28 +83,61 @@ def minerar_bloco(endereco_minerador):
     total_minerado = calcular_total_minerado(blockchain)
     recompensa_atual = calcular_recompensa(novo_indice)
 
+    if total_minerado >= SUPPLY_MAXIMO:
+        print("💰 Supply máximo alcançado! Não há mais recompensas.")
+        return False
+
     if total_minerado + recompensa_atual > SUPPLY_MAXIMO:
         recompensa_atual = SUPPLY_MAXIMO - total_minerado
-        if recompensa_atual <= 0:
-            print("💰 Supply máximo alcançado! Não há mais recompensas.")
-            recompensa_atual = 0
 
-    if recompensa_atual > 0:
-        transacoes_pendentes.append({
-            "de": "RECOMPENSA",
-            "para": endereco_minerador,
-            "quantidade": recompensa_atual
-        })
+    transacoes_validas = [tx for tx in transacoes_pendentes if validar_assinatura(tx)]
 
-    novo_bloco = criar_bloco(transacoes_pendentes, ultimo_bloco["hash"], novo_indice)
-    blockchain.append(novo_bloco)
+    transacoes_validas.append({
+        "de": "RECOMPENSA",
+        "para": endereco_minerador,
+        "quantidade": recompensa_atual
+    })
+
+    novo_bloco = {
+        "indice": novo_indice,
+        "transacoes": transacoes_validas,
+        "anterior": ultimo_bloco["hash"],
+        "nonce": 0,
+        "timestamp": time.time(),
+        "hash": ""
+    }
+
+    bloco_minerado = prova_de_trabalho(novo_bloco)
+    blockchain.append(bloco_minerado)
     salvar_blockchain(blockchain)
     salvar_transacoes_pendentes([])
 
-    print(f"✅ Bloco {novo_indice} minerado com sucesso! Recompensa: {recompensa_atual} tokens. Hash: {novo_bloco['hash']}")
+    print(f"✅ Bloco {novo_indice} minerado! Recompensa: {recompensa_atual} tokens. Hash: {bloco_minerado['hash']}")
+    return True
+
+def validar_assinatura(tx):
+    try:
+        remetente = tx["de"]
+        destinatario = tx["para"]
+        quantidade = tx["quantidade"]
+        assinatura_b64 = tx["assinatura"]
+        chave_publica_hex = tx["chave_publica"]
+
+        mensagem = f"remetente:{remetente};destinatario:{destinatario};quantidade:{quantidade}"
+        hash_mensagem = hashlib.sha256(mensagem.encode()).digest()
+
+        assinatura = base64.b64decode(assinatura_b64)
+        chave_publica_bytes = bytes.fromhex(chave_publica_hex)
+
+        vk = VerifyingKey.from_string(chave_publica_bytes, curve=SECP256k1)
+        vk.verify(assinatura, hash_mensagem)
+        return True
+    except:
+        return False
 
 if __name__ == "__main__":
+    print("=== Iniciando minerador do Tibúrcio Blockchain ===")
     endereco = input("Digite seu endereço para receber as recompensas: ").strip()
     while True:
         minerar_bloco(endereco)
-        
+        time.sleep(2)
