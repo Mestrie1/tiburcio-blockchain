@@ -2,16 +2,20 @@ import json
 import time
 import hashlib
 import base64
+import os
 from ecdsa import VerifyingKey, SECP256k1, BadSignatureError
 
 BLOCKCHAIN_FILE = "blockchain.json"
 TRANSACOES_PENDENTES_FILE = "transacoes_pendentes.json"
+BACKUP_DIR = "backups"
 
 RECOMPENSA_INICIAL = 50
 INTERVALO_HALVING = 210000
 SUPPLY_MAXIMO = 21000000
 DIFICULDADE = 4  # Quantidade de zeros iniciais exigidos no hash
 
+if not os.path.exists(BACKUP_DIR):
+    os.makedirs(BACKUP_DIR)
 
 def carregar_blockchain():
     try:
@@ -30,11 +34,16 @@ def carregar_blockchain():
         salvar_blockchain([bloco_genesis])
         return [bloco_genesis]
 
-
 def salvar_blockchain(blockchain):
     with open(BLOCKCHAIN_FILE, "w") as f:
         json.dump(blockchain, f, indent=4)
 
+def fazer_backup():
+    timestamp = time.strftime("%Y%m%d%H%M%S")
+    backup_file = f"{BACKUP_DIR}/blockchain_backup_{timestamp}.json"
+    with open(BLOCKCHAIN_FILE, "r") as original, open(backup_file, "w") as backup:
+        backup.write(original.read())
+    print(f"🗂️ Backup salvo: {backup_file}")
 
 def carregar_transacoes_pendentes():
     try:
@@ -44,18 +53,15 @@ def carregar_transacoes_pendentes():
     except:
         return []
 
-
 def salvar_transacoes_pendentes(transacoes):
     with open(TRANSACOES_PENDENTES_FILE, "w") as f:
         json.dump(transacoes, f, indent=4)
-
 
 def calcular_hash(bloco):
     bloco_copy = dict(bloco)
     bloco_copy.pop("hash", None)
     bloco_str = json.dumps(bloco_copy, sort_keys=True).encode()
     return hashlib.sha256(bloco_str).hexdigest()
-
 
 def prova_de_trabalho(bloco):
     bloco["nonce"] = 0
@@ -66,12 +72,10 @@ def prova_de_trabalho(bloco):
             return bloco
         bloco["nonce"] += 1
 
-
 def calcular_recompensa(indice_bloco):
     halvings = indice_bloco // INTERVALO_HALVING
     recompensa = RECOMPENSA_INICIAL // (2 ** halvings)
     return max(recompensa, 1)
-
 
 def calcular_total_minerado(blockchain):
     total = 0
@@ -80,7 +84,6 @@ def calcular_total_minerado(blockchain):
             if tx["de"] == "RECOMPENSA":
                 total += tx["quantidade"]
     return total
-
 
 def validar_assinatura(tx):
     try:
@@ -102,7 +105,6 @@ def validar_assinatura(tx):
     except (BadSignatureError, KeyError, ValueError):
         return False
 
-
 def minerar_bloco(carteira_minerador):
     blockchain = carregar_blockchain()
     transacoes_pendentes = carregar_transacoes_pendentes()
@@ -119,10 +121,8 @@ def minerar_bloco(carteira_minerador):
     elif total_minerado + recompensa_atual > SUPPLY_MAXIMO:
         recompensa_atual = SUPPLY_MAXIMO - total_minerado
 
-    # Filtra transações válidas (assinatura válida)
     transacoes_validas = [tx for tx in transacoes_pendentes if validar_assinatura(tx)]
 
-    # Inclui a recompensa para o minerador
     if recompensa_atual > 0:
         transacoes_validas.append({
             "de": "RECOMPENSA",
@@ -144,10 +144,10 @@ def minerar_bloco(carteira_minerador):
 
     blockchain.append(bloco_minerado)
     salvar_blockchain(blockchain)
-    salvar_transacoes_pendentes([])  # Limpa transações pendentes após inclusão no bloco
+    fazer_backup()
+    salvar_transacoes_pendentes([])
 
     print(f"✅ Bloco {novo_indice} minerado! Recompensa: {recompensa_atual} tokens. Hash: {bloco_minerado['hash']}")
-
 
 def main():
     print("=== Iniciando minerador do Tibúrcio Blockchain ===")
@@ -158,7 +158,6 @@ def main():
     while True:
         minerar_bloco(carteira_minerador)
         time.sleep(2)
-
 
 if __name__ == "__main__":
     main()

@@ -1,22 +1,20 @@
-import socket
+import requests
 import json
-import time
 
-def send_transaction(tx, ip='srv-d18drfp5pdvs73cue7gg.onrender.com', port=5001):  # porta 5001
+BLOCKCHAIN_FILE = "blockchain.json"
+
+def baixar_blockchain(url_nodo):
     try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((ip, port))
-        s.send(json.dumps(tx).encode())
-        s.close()
-        print("Transação enviada:", tx)
+        resposta = requests.get(f"{url_nodo}/blockchain")
+        nova_blockchain = resposta.json()
+
+        with open(BLOCKCHAIN_FILE, "w") as f:
+            json.dump(nova_blockchain, f, indent=4)
+
+        print("✅ Blockchain sincronizada com sucesso.")
     except Exception as e:
-        print("Erro ao enviar transação:", e)
+        print(f"❌ Erro ao sincronizar: {e}")
 
 if __name__ == "__main__":
-    tx = {
-        "sender": "wjkg42GwXUNsspnPNJ7L8qZJo3sBt8NWWrKG7TAKwpJF8KYaM",
-        "recipient": "2ZaDcYVC9YmPZzLMLqiL4BxiesGBKuPdn1Go5oM16N2RE8N6X9",
-        "amount": 10,
-        "timestamp": int(time.time())
-    }
-    send_transaction(tx)
+    url = input("🌐 URL do nó para sincronizar (ex: http://IP:5000): ").strip()
+    baixar_blockchain(url)
