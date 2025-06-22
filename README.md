@@ -6,3 +6,5 @@ Para começar, clone o repositório com o comando git clone https://github.com/M
 Com o servidor rodando, consulte o saldo de qualquer carteira pelo terminal usando curl http://localhost:8082/saldo/<endereco_publico>, substituindo <endereco_publico> pelo endereço que deseja consultar.
 
 As funções principais do projeto estão divididas em arquivos: app.py (API REST), minerador.py (minerador PoW), p2p_server.py (servidor P2P), send_tx.py (envio e assinatura de transações) e start.sh (script para facilitar a execução).
+
+(telegram https://t.me/+jU0ocN7fQx5mYTBh)
