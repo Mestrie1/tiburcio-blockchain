@@ -2,29 +2,41 @@ import socket
 import threading
 import json
 
-HOST = '0.0.0.0'
-PORT = 5000
+TRANSACOES_ARQUIVO = "transacoes_pendentes.json"
+
+def salvar_transacao(tx):
+    try:
+        with open(TRANSACOES_ARQUIVO, "r") as f:
+            transacoes = json.load(f)
+    except:
+        transacoes = []
+    transacoes.append(tx)
+    with open(TRANSACOES_ARQUIVO, "w") as f:
+        json.dump(transacoes, f, indent=4)
+    print("Transação salva:", tx)
 
 def handle_client(conn, addr):
-    print(f"Nova conexão de {addr}")
-    data = conn.recv(4096)
-    if data:
-        try:
+    print(f"Conexão de {addr}")
+    try:
+        data = conn.recv(4096)
+        if data:
             tx = json.loads(data.decode())
-            print("Transação recebida:", tx)
-            # Aqui futuramente podemos validar a transação >
-        except json.JSONDecodeError:
-            print("Erro ao decodificar JSON recebido")
-    conn.close()
+            salvar_transacao(tx)
+            conn.send(b"OK")
+    except Exception as e:
+        print("Erro:", e)
+    finally:
+        conn.close()
 
-def start_server():
+def start_server(host="0.0.0.0", port=5001):
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((HOST, PORT))
+    server.bind((host, port))
     server.listen()
-    print(f"Servidor P2P ouvindo em {HOST}:{PORT}")
+    print(f"Servidor rodando em {host}:{port}")
     while True:
         conn, addr = server.accept()
-        threading.Thread(target=handle_client, args=(conn, addr)).start()
+        thread = threading.Thread(target=handle_client, args=(conn, addr))
+        thread.start()
 
 if __name__ == "__main__":
     start_server()

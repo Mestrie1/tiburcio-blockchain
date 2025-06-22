@@ -10,10 +10,7 @@ TRANSACOES_PENDENTES_FILE = "transacoes_pendentes.json"
 RECOMPENSA_INICIAL = 50
 INTERVALO_HALVING = 210000
 SUPPLY_MAXIMO = 21000000
-DIFICULDADE = 4
-
-# Defina aqui seu endereço público para receber recompensas:
-CARTEIRA_MINERADOR = "497f981404fb415023347cb62589652fa1d52f62eb00bcba07b3383b6721b294"
+DIFICULDADE = 4  # Quantidade de zeros iniciais exigidos no hash
 
 
 def carregar_blockchain():
@@ -106,7 +103,7 @@ def validar_assinatura(tx):
         return False
 
 
-def minerar_bloco():
+def minerar_bloco(carteira_minerador):
     blockchain = carregar_blockchain()
     transacoes_pendentes = carregar_transacoes_pendentes()
 
@@ -129,7 +126,7 @@ def minerar_bloco():
     if recompensa_atual > 0:
         transacoes_validas.append({
             "de": "RECOMPENSA",
-            "para": CARTEIRA_MINERADOR,
+            "para": carteira_minerador,
             "quantidade": recompensa_atual
         })
 
@@ -147,13 +144,22 @@ def minerar_bloco():
 
     blockchain.append(bloco_minerado)
     salvar_blockchain(blockchain)
-    salvar_transacoes_pendentes([])  # Limpa pendentes após incluir no bloco
+    salvar_transacoes_pendentes([])  # Limpa transações pendentes após inclusão no bloco
 
     print(f"✅ Bloco {novo_indice} minerado! Recompensa: {recompensa_atual} tokens. Hash: {bloco_minerado['hash']}")
 
 
-if __name__ == "__main__":
+def main():
     print("=== Iniciando minerador do Tibúrcio Blockchain ===")
+    carteira_minerador = input("🔑 Informe o seu endereço público para receber recompensas: ").strip()
+    while len(carteira_minerador) == 0:
+        carteira_minerador = input("⚠️ Endereço inválido. Informe novamente: ").strip()
+
     while True:
-        minerar_bloco()
+        minerar_bloco(carteira_minerador)
         time.sleep(2)
+
+
+if __name__ == "__main__":
+    main()
+
