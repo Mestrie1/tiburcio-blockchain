@@ -1,44 +1,8 @@
-# Tibúrcio Blockchain
+Tiburcio Blockchain
+Tibúrcio Blockchain é uma blockchain própria, minerável, descentralizada e fácil de usar, que permite criar carteiras, minerar blocos, transferir tokens online com assinatura digital e consultar saldo via API REST. O sistema inclui comunicação P2P entre nós e salva toda a blockchain no servidor para garantir segurança e continuidade.
 
-Projeto de blockchain próprio, minerável e descentralizado, com funcionalidades completas: criação de carteira, mineração, transferências online e consulta de saldo, inspirado no Bitcoin mas com características próprias.
+Para começar, clone o repositório com o comando git clone https://github.com/Mestrie1/tiburcio-blockchain.git. Depois entre na pasta do projeto e dê permissão ao script de inicialização com chmod +x start.sh. Para rodar o projeto, use ./start.sh, que abre um menu interativo com opções para criar carteira, minerar, transferir tokens, iniciar servidores e sair.
 
----
+Com o servidor rodando, consulte o saldo de qualquer carteira pelo terminal usando curl http://localhost:8082/saldo/<endereco_publico>, substituindo <endereco_publico> pelo endereço que deseja consultar.
 
-## Índice
-
-- [Descrição](#descrição)  
-- [Pré-requisitos](#pré-requisitos)  
-- [Instalação](#instalação)  
-- [Como rodar](#como-rodar)  
-- [Menu Interativo](#menu-interativo)  
-- [Endpoints da API](#endpoints-da-api)  
-- [Comandos disponíveis](#comandos-disponíveis)  
-- [Contribuição](#contribuição)  
-- [Licença](#licença)  
-
----
-
-## Descrição
-
-Este projeto implementa uma blockchain chamada Tibúrcio, com sistema próprio de mineração Proof of Work, transações assinadas, rede P2P e armazenamento dos blocos no servidor. Possui interface via terminal e servidor Flask para consultas e transações online.
-
----
-
-## Pré-requisitos
-
-- Python 3.8 ou superior  
-- Pip  
-- Git  
-- Bibliotecas Python necessárias: Flask, requests, ecdsa
-
----
-
-## Instalação
-
-```bash
-# Clonar o repositório
-git clone https://github.com/Mestrie1/tiburcio-blockchain.git
-cd tiburcio-blockchain
-
-# Instalar dependências
-pip install -r requirements.txt
+As funções principais do projeto estão divididas em arquivos: app.py (API REST), minerador.py (minerador PoW), p2p_server.py (servidor P2P), send_tx.py (envio e assinatura de transações) e start.sh (script para facilitar a execução).
