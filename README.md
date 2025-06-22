@@ -1,36 +1,34 @@
+# Tiburcio Blockchain
 
-# ⚡ Tibúrcio Blockchain
-
-**Bem-vindo ao Tibúrcio Blockchain**, a primeira blockchain minerável, descentralizada e espiritual do Brasil.
-
-Essa não é apenas uma criptomoeda. É um movimento.
-
-> ⚡ **“Luz onde há trevas. Perdão onde há ódio. Fé onde há dúvida.”** ⚡
+> Projeto blockchain descentralizado e minerável, com sistema de transferências online, mineração Proof of Work, e carteira própria.  
+> Temática espiritual e propósito de levar luz contra as trevas.
 
 ---
 
-## ✨ Sobre o projeto
+## Funcionalidades
 
-O **Tibúrcio Blockchain** é uma blockchain própria, minerável e **independente** de outras redes como Bitcoin ou Ethereum.  
-Aqui qualquer pessoa pode minerar, fazer transações e ajudar a manter a rede viva.
-
-**Funcionalidades principais:**
-- 🔨 Sistema de mineração com recompensa (inicialmente 50 tokens por bloco)
-- 🪙 Transferências entre carteiras
-- 📦 Visualização de saldo por carteira
-- 🏆 Sistema de Halving especial chamado **Ensinador**
-- 🌍 Infraestrutura online via Render
+- Criar carteira (endereço público e chave privada)  
+- Mineração automática de blocos com recompensas  
+- Transferência online de tokens com assinatura digital  
+- Consulta de saldo por endereço  
+- Servidor web para API local (Flask)  
+- Rede P2P para sincronização de blocos e transações  
+- Scripts para facilitar execução (bash)
 
 ---
 
-## 🚀 Como usar (Passo a Passo)
+## Requisitos
 
-### ✅ 1️⃣ Instalação no Termux
+- Python 3 instalado  
+- Bibliotecas Python: Flask, e outras necessárias (confira requirements.txt se disponível)  
+- Ambiente Linux/Termux (testado)
+
+---
+
+## Como usar - passo a passo
+
+### 1. Clonar o repositório
 
 ```bash
-pkg update && pkg upgrade
-pkg install git python
 git clone https://github.com/Mestrie1/tiburcio-blockchain.git
 cd tiburcio-blockchain
-pip install -r requirements.txt
-
