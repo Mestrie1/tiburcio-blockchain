@@ -41,9 +41,7 @@ enviar_transacao() {
   read -p "Chave privada (hex): " chave_privada
   read -p "Endereço do destinatário (para): " recipient
   read -p "Quantidade a transferir: " quantidade
-
   python3 send_tx.py "$sender" "$chave_privada" "$recipient" "$quantidade"
-
   echo "Transação enviada. Voltando ao menu..."
   sleep 2
 }
@@ -51,6 +49,14 @@ enviar_transacao() {
 consultar_saldo() {
   read -p "Digite o endereço público para consultar saldo: " endereco
   curl http://localhost:$PORTA_SALDO/saldo/$endereco
+  echo
+}
+
+# Função atualizada para consulta online via API app.py na porta 8082
+consultar_saldo_online() {
+  read -p "Digite o endereço público para consultar saldo ONLINE: " endereco
+  echo "Executando: curl http://localhost:$PORTA_APP/saldo/$endereco"
+  curl http://localhost:$PORTA_APP/saldo/$endereco
   echo
 }
 
@@ -77,15 +83,16 @@ while true; do
   echo "3) Enviar transação"
   echo "4) Consultar saldo"
   echo "5) Consolidar blocos (recuperar saldo)"
+  echo "6) Consultar saldo ONLINE"
   echo "0) Sair"
   read -p "Escolha uma opção: " opcao
-
   case $opcao in
     1) start_servidores ;;
     2) minerar ;;
     3) enviar_transacao ;;
     4) consultar_saldo ;;
     5) consolidar_blocos ;;
+    6) consultar_saldo_online ;;
     0) echo "Saindo..."; exit 0 ;;
     *) echo "Opção inválida!" ;;
   esac
