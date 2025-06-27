@@ -52,12 +52,16 @@ consultar_saldo() {
   echo
 }
 
-# Função atualizada para consulta online via API app.py na porta 8082
 consultar_saldo_online() {
   read -p "Digite o endereço público para consultar saldo ONLINE: " endereco
   echo "Executando: curl http://localhost:$PORTA_APP/saldo/$endereco"
   curl http://localhost:$PORTA_APP/saldo/$endereco
   echo
+}
+
+gerar_carteira() {
+  echo "Gerando nova carteira..."
+  python3 gerar_carteira.py
 }
 
 consolidar_blocos() {
@@ -84,6 +88,7 @@ while true; do
   echo "4) Consultar saldo"
   echo "5) Consolidar blocos (recuperar saldo)"
   echo "6) Consultar saldo ONLINE"
+  echo "7) Gerar carteira"
   echo "0) Sair"
   read -p "Escolha uma opção: " opcao
   case $opcao in
@@ -93,6 +98,7 @@ while true; do
     4) consultar_saldo ;;
     5) consolidar_blocos ;;
     6) consultar_saldo_online ;;
+    7) gerar_carteira ;;
     0) echo "Saindo..."; exit 0 ;;
     *) echo "Opção inválida!" ;;
   esac
