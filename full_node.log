@@ -1,0 +1,7 @@
+Digite o endereço da carteira mineradora (ou deixe vazio para não minerar): Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/tiburcio-blockchain/tiburcio_full_node.py", line 253, in <module>
+    main()
+  File "/data/data/com.termux/files/home/tiburcio-blockchain/tiburcio_full_node.py", line 231, in main
+    carteira = input("Digite o endereço da carteira mineradora (ou deixe vazio para não minerar): ").strip()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+EOFError: EOF when reading a line

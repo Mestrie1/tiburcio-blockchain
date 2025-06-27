@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import json
 import traceback
 
@@ -28,6 +28,18 @@ def saldo(endereco):
 
     except Exception as e:
         print("Erro no /saldo:", e)
+        traceback.print_exc()
+        return jsonify({'erro': 'Erro interno no servidor'}), 500
+
+@app.route('/enviar_transacao', methods=['POST'])
+def receber_transacao():
+    try:
+        dados = request.get_json()
+        print("Transação recebida:", dados)
+        # Aqui você pode validar a transação e adicioná-la no pool para minerar
+        return jsonify({'status': 'transacao recebida com sucesso'})
+    except Exception as e:
+        print("Erro no /enviar_transacao:", e)
         traceback.print_exc()
         return jsonify({'erro': 'Erro interno no servidor'}), 500
 

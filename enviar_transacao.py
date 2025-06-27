@@ -34,4 +34,16 @@ transacao = {
 url = "http://127.0.0.1:8082/nova_transacao"
 response = requests.post(url, json=transacao)
 
-print(response.json())
+# Verifica o status da resposta
+print(f"Status Code: {response.status_code}")
+
+# Se o status for 200, tenta processar o JSON
+if response.status_code == 200:
+    try:
+        print("Resposta JSON:", response.json())
+    except ValueError as e:
+        print("Erro ao processar JSON:", e)
+        print("Conteúdo da resposta:", response.text)
+else:
+    print(f"Erro na resposta. Código de status: {response.status_code}")
+    print("Conteúdo da resposta:", response.text)

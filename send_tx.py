@@ -1,44 +1,48 @@
-import socket
-import json
+import sys
 import time
+import json
 import hashlib
 import base64
 from ecdsa import SigningKey, SECP256k1
 
+try:
+    import requests
+except ImportError:
+    print("Erro: instale a biblioteca requests com 'pip install requests'")
+    sys.exit(1)
+
 def gerar_chave_publica_hex(chave_privada_hex):
     sk = SigningKey.from_string(bytes.fromhex(chave_privada_hex), curve=SECP256k1)
     vk = sk.get_verifying_key()
-    return vk.to_string("compressed").hex()  # chave pública compressa em hex
+    return vk.to_string("compressed").hex()
 
 def gerar_assinatura(chave_privada_hex, mensagem):
-    chave_privada_bytes = bytes.fromhex(chave_privada_hex)
-    sk = SigningKey.from_string(chave_privada_bytes, curve=SECP256k1)
+    sk = SigningKey.from_string(bytes.fromhex(chave_privada_hex), curve=SECP256k1)
     hash_msg = hashlib.sha256(mensagem.encode()).digest()
     assinatura = sk.sign(hash_msg)
     return base64.b64encode(assinatura).decode()
 
-def send_transaction(tx, ip='127.0.0.1', port=5001):
+def send_transaction_http(tx, url='http://127.0.0.1:8082/enviar_transacao'):
     try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((ip, port))
-        s.send(json.dumps(tx).encode())
-        s.close()
-        print("Transação enviada:", tx)
+        resp = requests.post(url, json=tx)
+        print("Status Code:", resp.status_code)
+        print("Resposta:", resp.text)
     except Exception as e:
         print("Erro ao enviar transação:", e)
 
-if __name__ == "__main__":
-    print("=== Enviar transação assinada ===")
-    sender = input("Endereço público (de): ").strip()
-    chave_privada = input("Chave privada (hex): ").strip()
-    recipient = input("Endereço do destinatário (para): ").strip()
-    amount_str = input("Quantidade a transferir: ").strip()
+def main():
+    if len(sys.argv) != 5:
+        print("Uso: python send_tx.py <endereco_de> <chave_privada_hex> <endereco_para> <quantidade>")
+        return
 
+    sender = sys.argv[1]
+    chave_privada = sys.argv[2]
+    recipient = sys.argv[3]
     try:
-        amount = float(amount_str)
+        amount = float(sys.argv[4])
     except ValueError:
-        print("Quantidade inválida! Use um número.")
-        exit(1)
+        print("Quantidade inválida!")
+        return
 
     chave_publica = gerar_chave_publica_hex(chave_privada)
     mensagem = f"remetente:{sender};destinatario:{recipient};quantidade:{amount}"
@@ -53,4 +57,7 @@ if __name__ == "__main__":
         "timestamp": int(time.time())
     }
 
-    send_transaction(tx)
+    send_transaction_http(tx)
+
+if __name__ == "__main__":
+    main()

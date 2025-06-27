@@ -1,68 +1,92 @@
 #!/bin/bash
 
-# Verifica se Python, pip e módulos necessários estão instalados
-echo "🔧 Verificando dependências..."
+PORTA_SALDO=5003
+PORTA_APP=8082
 
-pkg install -y python git curl
+start_app() {
+  echo "Iniciando servidor API app.py na porta $PORTA_APP..."
+  nohup python3 app.py > app.log 2>&1 &
+  echo "Servidor app.py rodando em background. Log: app.log"
+}
 
-pip install --upgrade pip
-pip install flask ecdsa
+start_servidores() {
+  echo "Iniciando Full Node sem carteira (apenas full node)..."
+  nohup python3 tiburcio_full_node.py > full_node.log 2>&1 &
+  echo "Full Node rodando em background. Log: full_node.log"
 
-echo "✅ Dependências instaladas."
+  echo "Iniciando servidor P2P..."
+  nohup python3 p2p_server.py > p2p_server.log 2>&1 &
+  echo "Servidor P2P rodando. Log: p2p_server.log"
+
+  echo "Iniciando servidor de saldo na porta $PORTA_SALDO..."
+  nohup python3 saldo_server.py > saldo_server.log 2>&1 &
+  echo "Servidor de saldo rodando. Log: saldo_server.log"
+
+  start_app
+}
+
+minerar() {
+  read -p "Digite o endereço da carteira mineradora: " carteira
+  if [ -z "$carteira" ]; then
+    echo "Você precisa fornecer uma carteira para minerar."
+    return
+  fi
+  echo "Iniciando minerador para carteira: $carteira"
+  python3 minerador.py --minerador "$carteira"
+}
+
+enviar_transacao() {
+  echo "Executando envio de transação assinada online..."
+  read -p "Endereço público (de): " sender
+  read -p "Chave privada (hex): " chave_privada
+  read -p "Endereço do destinatário (para): " recipient
+  read -p "Quantidade a transferir: " quantidade
+
+  python3 send_tx.py "$sender" "$chave_privada" "$recipient" "$quantidade"
+
+  echo "Transação enviada. Voltando ao menu..."
+  sleep 2
+}
+
+consultar_saldo() {
+  read -p "Digite o endereço público para consultar saldo: " endereco
+  curl http://localhost:$PORTA_SALDO/saldo/$endereco
+  echo
+}
+
+consolidar_blocos() {
+  echo "Consolidando blocos..."
+  python3 consolidar_blockchain.py
+}
+
+parar_tudo() {
+  echo "Parando todos os processos..."
+  pkill -f tiburcio_full_node.py
+  pkill -f p2p_server.py
+  pkill -f saldo_server.py
+  pkill -f minerador.py
+  pkill -f app.py
+  echo "Todos os servidores foram encerrados."
+}
 
 while true; do
-  echo ""
-  echo "==== Tiburcio Blockchain ===="
-  echo "1) Criar carteira"
-  echo "2) Minerar (com backup automático)"
-  echo "3) Transferir tokens"
-  echo "4) Iniciar API (app.py)"
-  echo "5) Iniciar P2P"
-  echo "6) Consultar saldo"
-  echo "7) Sair"
+  echo
+  echo "=== Tiburcio Blockchain - Menu ==="
+  echo "1) Iniciar todos os servidores (Full Node + P2P + Saldo + API)"
+  echo "2) Minerar (minerador.py)"
+  echo "3) Enviar transação"
+  echo "4) Consultar saldo"
+  echo "5) Consolidar blocos (recuperar saldo)"
+  echo "0) Sair"
   read -p "Escolha uma opção: " opcao
 
   case $opcao in
-    1)
-      echo "🔑 Criando carteira..."
-      python3 gerar_carteira.py
-      ;;
-    2)
-      read -p "Digite seu endereço público para receber recompensas: " endereco
-      while true; do
-        python3 minerador.py << EOF
-$endereco
-EOF
-        cp blockchain.json blockchain_backup_$(date +%Y%m%d%H%M%S).json
-        echo "💾 Backup realizado."
-        sleep 2
-      done
-      ;;
-    3)
-      read -p "Digite seu endereço público (de): " de
-      read -p "Digite sua chave privada: " chave_privada
-      read -p "Digite o endereço do destinatário (para): " para
-      read -p "Digite a quantidade a transferir: " quantidade
-      python3 send_tx.py --de "$de" --chave_privada "$chave_privada" --para "$para" --quantidade "$quantidade"
-      ;;
-    4)
-      echo "🚀 Iniciando servidor API em http://localhost:8082 ..."
-      python3 app.py
-      ;;
-    5)
-      echo "🌐 Iniciando servidor P2P na porta 5001 ..."
-      python3 p2p_server.py
-      ;;
-    6)
-      read -p "Digite o endereço público para consultar saldo: " endereco_saldo
-      curl http://localhost:8082/saldo/$endereco_saldo
-      ;;
-    7)
-      echo "👋 Saindo..."
-      break
-      ;;
-    *)
-      echo "⚠️ Opção inválida. Tente novamente."
-      ;;
+    1) start_servidores ;;
+    2) minerar ;;
+    3) enviar_transacao ;;
+    4) consultar_saldo ;;
+    5) consolidar_blocos ;;
+    0) echo "Saindo..."; exit 0 ;;
+    *) echo "Opção inválida!" ;;
   esac
 done

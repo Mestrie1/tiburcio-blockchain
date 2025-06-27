@@ -1,0 +1,8 @@
+=== Iniciando minerador do Tibúrcio Blockchain ===
+🔑 Informe o seu endereço público para receber recompensas: Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/tiburcio-blockchain/minerador.py", line 163, in <module>
+    main()
+  File "/data/data/com.termux/files/home/tiburcio-blockchain/minerador.py", line 154, in main
+    carteira_minerador = input("🔑 Informe o seu endereço público para receber recompensas: ").strip()
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+EOFError: EOF when reading a line
