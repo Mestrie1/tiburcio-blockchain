@@ -1,49 +1,52 @@
+#!/usr/bin/env python3
 import requests
 import hashlib
 import base64
+import os
 from ecdsa import SigningKey, SECP256k1
 
-# Sua chave privada em hex (guarde em segurança!)
+# Configuração da chave privada do remetente (hex)
 chave_privada_hex = "406eff534d4366cb4a14301252f7a26db7cb29587457afb6ad42a3a25c637d74"
 
-# Cria a chave de assinatura
+# Cria a chave de assinatura ECDSA
 sk = SigningKey.from_string(bytes.fromhex(chave_privada_hex), curve=SECP256k1)
 
-remetente = "497f981404fb415023347cb62589652fa1d52f62eb00bcba07b3383b6721b294"
-destinatario = input("Endereço destinatário (para): ").strip()
-quantidade = int(input("Quantidade a transferir: "))
+def assinar_transacao(remetente, destinatario, quantidade):
+    mensagem = f"remetente:{remetente};destinatario:{destinatario};quantidade:{quantidade}"
+    hash_mensagem = hashlib.sha256(mensagem.encode()).digest()
+    assinatura = sk.sign(hash_mensagem)
+    return base64.b64encode(assinatura).decode()
 
-# Cria a mensagem a ser assinada
-mensagem = f"remetente:{remetente};destinatario:{destinatario};quantidade:{quantidade}"
-hash_mensagem = hashlib.sha256(mensagem.encode()).digest()
+def obter_chave_publica():
+    vk = sk.get_verifying_key()
+    return vk.to_string().hex()
 
-# Gera a assinatura
-assinatura = sk.sign(hash_mensagem)
-assinatura_b64 = base64.b64encode(assinatura).decode()
+def main():
+    remetente = input("Endereço público (de): ").strip()
+    destinatario = input("Endereço do destinatário (para): ").strip()
+    quantidade = int(input("Quantidade a transferir: ").strip())
 
-# Cria a transação com assinatura e chave pública (para validação)
-transacao = {
-    "de": remetente,
-    "para": destinatario,
-    "quantidade": quantidade,
-    "assinatura": assinatura_b64,
-    "chave_publica": sk.get_verifying_key().to_string().hex()
-}
+    assinatura_b64 = assinar_transacao(remetente, destinatario, quantidade)
+    chave_pub_hex = obter_chave_publica()
 
-# Envia para o servidor
-url = "http://127.0.0.1:8082/nova_transacao"
-response = requests.post(url, json=transacao)
+    payload = {
+        "de": remetente,
+        "para": destinatario,
+        "quantidade": quantidade,
+        "assinatura": assinatura_b64,
+        "chave_publica": chave_pub_hex
+    }
 
-# Verifica o status da resposta
-print(f"Status Code: {response.status_code}")
-
-# Se o status for 200, tenta processar o JSON
-if response.status_code == 200:
+    url = "http://127.0.0.1:8082/enviar_transacao"
     try:
-        print("Resposta JSON:", response.json())
-    except ValueError as e:
-        print("Erro ao processar JSON:", e)
-        print("Conteúdo da resposta:", response.text)
-else:
-    print(f"Erro na resposta. Código de status: {response.status_code}")
-    print("Conteúdo da resposta:", response.text)
+        resp = requests.post(url, json=payload)
+        print(f"Status Code: {resp.status_code}")
+        try:
+            print("Resposta JSON:", resp.json())
+        except ValueError:
+            print("Conteúdo da resposta:", resp.text)
+    except requests.exceptions.ConnectionError as e:
+        print("Erro de conexão ao enviar transação:", e)
+
+if __name__ == "__main__":
+    main()

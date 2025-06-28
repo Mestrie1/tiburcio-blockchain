@@ -1,28 +1,24 @@
 from flask import Flask, jsonify
-import json
 import os
+import json
 
 app = Flask(__name__)
-CAMINHO_BLOCKCHAIN = "blockchain.json"
+PASTA_BLOCOS = "blocos"
 
 def calcular_saldo(endereco):
     saldo = 0
-    if not os.path.exists(CAMINHO_BLOCKCHAIN):
+    if not os.path.exists(PASTA_BLOCOS):
         return saldo
 
-    with open(CAMINHO_BLOCKCHAIN, "r") as f:
-        try:
-            blockchain = json.load(f)
-        except json.JSONDecodeError:
-            return saldo
-
-    for bloco in blockchain:
-        transacoes = bloco.get("transacoes", [])
-        for tx in transacoes:
-            if tx.get("para") == endereco:
-                saldo += tx.get("quantidade", 0)
-            if tx.get("de") == endereco:
-                saldo -= tx.get("quantidade", 0)
+    for arquivo in os.listdir(PASTA_BLOCOS):
+        caminho = os.path.join(PASTA_BLOCOS, arquivo)
+        with open(caminho, "r") as f:
+            bloco = json.load(f)
+            for tx in bloco.get("transacoes", []):
+                if tx.get("para") == endereco:
+                    saldo += tx.get("quantidade", 0)
+                if tx.get("de") == endereco:
+                    saldo -= tx.get("quantidade", 0)
     return saldo
 
 @app.route("/")

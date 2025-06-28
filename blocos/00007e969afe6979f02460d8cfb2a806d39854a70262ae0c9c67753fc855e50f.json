@@ -1,0 +1,15 @@
+{
+    "indice": 17,
+    "transacoes": [
+        {
+            "de": "RECOMPENSA",
+            "para": "ef5fcf9360d3afac5002adf9cac237c39ee48382c9f3f5396e8ff2b150d7a426",
+            "quantidade": 50
+        }
+    ],
+    "anterior": "000049c6a2677bae5921eba1b12f361ab25f7321f046c8637bdedefaf30263b5",
+    "nonce": 18801,
+    "timestamp": 1751073411.9246588,
+    "hash": "00007e969afe6979f02460d8cfb2a806d39854a70262ae0c9c67753fc855e50f",
+    "dificuldade": 4
+}

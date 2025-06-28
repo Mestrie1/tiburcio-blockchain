@@ -1,0 +1,22 @@
+{
+    "indice": 1886,
+    "transacoes": [
+        {
+            "de": "ef5fcf9360d3afac5002adf9cac237c39ee48382c9f3f5396e8ff2b150d7a426",
+            "para": "65300cd42c38d7b7e9449a8e1dbb63f1f2079c3e32e17a79b10766a0140442f8",
+            "quantidade": 200,
+            "assinatura": "vMV5fyTsfIVZ5NIkNBDEKezeHA+m/yLXAV+gZc5IwgPRHp7js88n2zWqTobqUJU8bSHTdMKU/VdEHjG0gf7L9A==",
+            "chave_publica": "775b8afd00eff20322347dd9f8b7bdc0e9af4aafa8548e2d389313039228f4cf8008672c4c03fc83f72b56954565236e79a93e351b30ffe70c0312166c23d7dd"
+        },
+        {
+            "de": "RECOMPENSA",
+            "para": "ef5fcf9360d3afac5002adf9cac237c39ee48382c9f3f5396e8ff2b150d7a426",
+            "quantidade": 50
+        }
+    ],
+    "anterior": "0000e6ba0ed297be360f48c1255fef3e086009dbbb1f071aff18bbd90659a4d0",
+    "nonce": 59813,
+    "timestamp": 1751079407.753993,
+    "hash": "00001b01a0f9c61577973c79286f706a1c6c9ebb9da6fc26b2ae57b1df7c28b6",
+    "dificuldade": 4
+}
