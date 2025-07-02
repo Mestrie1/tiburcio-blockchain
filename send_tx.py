@@ -31,10 +31,38 @@ def send_transaction_http(tx, url='http://127.0.0.1:8082/enviar_transacao'):
         print("Erro ao enviar transação:", e)
 
 def main():
-    if len(sys.argv) != 5:
-        print("Uso: python send_tx.py <endereco_de> <chave_privada_hex> <endereco_para> <quantidade>")
+    if len(sys.argv) < 5:
+        print("Uso:")
+        print("  python send_tx.py <de> <chave_privada> <para> <quantidade>")
+        print("  python send_tx.py nft <de> <chave_privada> <para> <url_do_nft>")
         return
 
+    if sys.argv[1] == "nft":
+        sender = sys.argv[2]
+        chave_privada = sys.argv[3]
+        recipient = sys.argv[4]
+        nft_url = sys.argv[5]
+        descricao = "Transferência NFT"
+
+        chave_publica = gerar_chave_publica_hex(chave_privada)
+        mensagem = f"nft_transfer:{sender}->{recipient};url:{nft_url}"
+        assinatura = gerar_assinatura(chave_privada, mensagem)
+
+        tx = {
+            "tipo": "nft_transfer",
+            "de": sender,
+            "para": recipient,
+            "nft_url": nft_url,
+            "descricao": descricao,
+            "assinatura": assinatura,
+            "chave_publica": chave_publica,
+            "timestamp": int(time.time())
+        }
+
+        send_transaction_http(tx)
+        return
+
+    # Transação padrão (moeda)
     sender = sys.argv[1]
     chave_privada = sys.argv[2]
     recipient = sys.argv[3]
@@ -61,3 +89,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

@@ -1,5 +1,3 @@
-#!/bin/bash
-
 PORTA_SALDO=5003
 PORTA_APP=8082
 
@@ -43,6 +41,17 @@ enviar_transacao() {
   read -p "Quantidade a transferir: " quantidade
   python3 send_tx.py "$sender" "$chave_privada" "$recipient" "$quantidade"
   echo "Transação enviada. Voltando ao menu..."
+  sleep 2
+}
+
+enviar_nft() {
+  echo "Executando envio de transferência de NFT..."
+  read -p "Endereço remetente: " sender
+  read -p "Chave privada (hex): " privkey
+  read -p "Endereço destinatário: " recipient
+  read -p "URL do NFT: " nfturl
+  python3 send_tx.py nft "$sender" "$privkey" "$recipient" "$nfturl"
+  echo "Transferência NFT enviada. Voltando ao menu..."
   sleep 2
 }
 
@@ -95,6 +104,7 @@ while true; do
   echo "6) Consultar saldo ONLINE"
   echo "7) Gerar carteira"
   echo "8) Criar NFT"
+  echo "9) Transferir NFT"
   echo "0) Sair"
   read -p "Escolha uma opção: " opcao
   case $opcao in
@@ -106,6 +116,7 @@ while true; do
     6) consultar_saldo_online ;;
     7) gerar_carteira ;;
     8) criar_nft ;;
+    9) enviar_nft ;;
     0) echo "Saindo..."; exit 0 ;;
     *) echo "Opção inválida!" ;;
   esac
