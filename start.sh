@@ -69,6 +69,11 @@ consolidar_blocos() {
   python3 consolidar_blockchain.py
 }
 
+criar_nft() {
+  echo "Iniciando criação de NFT..."
+  python3 criar_nft.py
+}
+
 parar_tudo() {
   echo "Parando todos os processos..."
   pkill -f tiburcio_full_node.py
@@ -89,6 +94,7 @@ while true; do
   echo "5) Consolidar blocos (recuperar saldo)"
   echo "6) Consultar saldo ONLINE"
   echo "7) Gerar carteira"
+  echo "8) Criar NFT"
   echo "0) Sair"
   read -p "Escolha uma opção: " opcao
   case $opcao in
@@ -99,6 +105,7 @@ while true; do
     5) consolidar_blocos ;;
     6) consultar_saldo_online ;;
     7) gerar_carteira ;;
+    8) criar_nft ;;
     0) echo "Saindo..."; exit 0 ;;
     *) echo "Opção inválida!" ;;
   esac
