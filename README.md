@@ -1,7 +1,4 @@
 # 🧙‍♂️ Tibúrcio Blockchain
-# Tiburcio Blockchain
-
-# Tiburcio Blockchain
 
 Bem-vindo ao Tiburcio Blockchain, uma blockchain descentralizada, minerável e com suporte a NFTs.  
 Este projeto oferece ferramentas para mineração, criação e transferência de tokens e NFTs, além de servidores para sincronização e consulta de saldo.
