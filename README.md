@@ -1,38 +1,36 @@
 # 🧙‍♂️ Tibúrcio Blockchain
+# Tiburcio Blockchain
 
-⭐⭐⭐Tibúrcio Blockchain é uma implementação independente e segura de uma blockchain baseada em prova de trabalho (Proof of Work - PoW), com mecanismos avançados para garantir segurança, descentralização e emissão controlada de tokens.
+# Tiburcio Blockchain
 
----
-
-## Características Principais
-
-- **Prova de Trabalho com dificuldade dinâmica**  
-  O sistema ajusta automaticamente a dificuldade da mineração a cada 2016 blocos para manter o tempo médio de criação em cerca de 10 minutos por bloco.
-
-- **Recompensa decrescente (Halving)**  
-  A recompensa inicial é de 50 tokens, reduzida pela metade a cada 210.000 blocos, limitando a inflação e promovendo escassez.
-
-- **Oferta máxima limitada a 21 milhões de tokens**  
-  O total de tokens gerados é finito, assegurando a valorização a longo prazo.
-
-- **Transações com assinaturas digitais ECDSA**  
-  Todas as transações são autenticadas com chaves públicas e assinaturas digitais para garantir integridade e segurança.
-
-- **Armazenamento local dos blocos**  
-  Os blocos são armazenados individualmente em arquivos JSON para fácil acesso e auditoria.
-
-- **Rede P2P para sincronização entre nós**  
-  Os nós comunicam-se entre si para compartilhar blocos e transações, mantendo a blockchain atualizada de forma descentralizada.
+Bem-vindo ao Tiburcio Blockchain, uma blockchain descentralizada, minerável e com suporte a NFTs.  
+Este projeto oferece ferramentas para mineração, criação e transferência de tokens e NFTs, além de servidores para sincronização e consulta de saldo.
 
 ---
 
-## Como usar
+## Funcionalidades principais
 
-### 1. Clonar o repositório
+- Mineração com Proof of Work (PoW) e dificuldade ajustável  
+- Transferência de tokens nativos  
+- **Criação e transferência de NFTs**  
+- Servidores Full Node, P2P, API e consulta de saldo  
+- Geração de carteiras e consolidação de blocos  
+- Interface de menu interativo para facilitar o uso
+
+---
+
+## Pré-requisitos
+
+- Python 3 instalado  
+- Bibliotecas Python: `ecdsa`, `requests`  
+- Ambiente Linux/Termux recomendado para melhor compatibilidade
+
+---
+
+## Instalação
+
+Clone o repositório:
 
 ```bash
 git clone https://github.com/Mestrie1/tiburcio-blockchain.git
 cd tiburcio-blockchain
-pip install -r requirements.txt
-chmod +x start.sh
-./start.sh
