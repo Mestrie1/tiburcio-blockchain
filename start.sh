@@ -85,10 +85,7 @@ criar_nft() {
   python3 criar_nft.py
 }
 
-listar_nfts_carteira() {
-  echo "Listando NFTs da sua carteira..."
-  python3 listar_nfts.py
-}
+# Função listar_nfts_carteira foi removida conforme pedido
 
 listar_nfts_loja() {
   echo "Listando NFTs disponíveis na loja..."
@@ -123,9 +120,9 @@ while true; do
   echo "7) Gerar carteira"
   echo "8) Criar NFT"
   echo "9) Transferir NFT"
-  echo "10) Ver NFTs da carteira"
-  echo "11) Listar NFTs da loja"
-  echo "12) Comprar NFT da loja"
+  # echo "10) Ver NFTs da carteira"  # removida
+  echo "10) Listar NFTs da loja"
+  echo "11) Comprar NFT da loja"
   echo "0) Sair"
   read -p "Escolha uma opção: " opcao
   case $opcao in
@@ -138,9 +135,8 @@ while true; do
     7) gerar_carteira ;;
     8) criar_nft ;;
     9) enviar_nft ;;
-    10) listar_nfts_carteira ;;
-    11) listar_nfts_loja ;;
-    12) comprar_nft ;;
+    10) listar_nfts_loja ;;
+    11) comprar_nft ;;
     0) echo "Saindo..."; exit 0 ;;
     *) echo "Opção inválida!" ;;
   esac
