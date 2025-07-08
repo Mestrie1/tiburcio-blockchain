@@ -1,0 +1,23 @@
+ * Serving Flask app 'app'
+ * Debug mode: off
+Address already in use
+Port 8082 is in use by another program. Either identify and stop that program, or start the server with a different port.
+ * Serving Flask app 'app'
+ * Debug mode: off
+Address already in use
+Port 8082 is in use by another program. Either identify and stop that program, or start the server with a different port.
+ * Serving Flask app 'app'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.1.65:8082
+Press CTRL+C to quit
+127.0.0.1 - - [08/Jul/2025 17:34:50] "GET /nfts HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 17:35:07] "GET /saldo/SEU_ENDERECO HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 17:38:06] "GET /nfts HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 17:46:51] "POST /enviar_transacao HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 17:49:56] "GET /nfts HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 17:51:39] "GET /nfts HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 17:56:25] "GET /nfts HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 18:00:32] "POST /enviar_transacao HTTP/1.1" 200 -

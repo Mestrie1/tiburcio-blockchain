@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "nome": "Mestre da Luz",
+    "imagem": "https://exemplo.com/nft1.png",
+    "preco": 10
+  },
+  {
+    "id": 2,
+    "nome": "Guardião da Esperança",
+    "imagem": "https://exemplo.com/nft2.png",
+    "preco": 25
+  },
+  {
+    "id": 3,
+    "nome": "Arte Do Mestre",
+    "imagem": "https://streamable.com/js0y4b",
+    "preco": 20
+  }
+]

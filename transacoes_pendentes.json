@@ -38,5 +38,31 @@
         "assinatura": "3iP9m0bqdtSv5WpsPFefs3Ox0o2cwhJmw8v/9nbOCepL2Hr7z7f/aNEOc50O0vOUirol3OtfqMKY+i6x9QwlFQ==",
         "chave_publica": "03775b8afd00eff20322347dd9f8b7bdc0e9af4aafa8548e2d389313039228f4cf",
         "timestamp": 1751473532
+    },
+    {
+        "tipo": "nft",
+        "de": "ef5fcf9360d3afac5002adf9cac237c39ee48382c9f3f5396e8ff2b150d7a426",
+        "dados": {
+            "nome": "Arte Do Mestre",
+            "descricao": "Video de uma obra de artena parede pintado pelo mestre.",
+            "url_midia": "https://streamable.com/js0y4b",
+            "unicidade": "35157bc5471c3324fb6d40c93a9eef8cdb1a7b8c1341f39e4057d8f4f7495678",
+            "royalties": {
+                "criador": "ef5fcf9360d3afac5002adf9cac237c39ee48382c9f3f5396e8ff2b150d7a426",
+                "percentual": 7
+            }
+        },
+        "assinatura": "d5e018989e26dba2976beef83b4af40e665c91b749d3faeb896ab606bc188244135f324963ba690f494676dab3216c3cc57e0b30d4786122bc1d23287ad9a8c8"
+    },
+    {
+        "tipo": "nft_compra",
+        "de": "ef5fcf9360d3afac5002adf9cac237c39e8ff2b150d7a426",
+        "dados": {
+            "nome": "Mestre da Luz",
+            "preco": 10,
+            "imagem": "https://exemplo.com/nft1.png",
+            "timestamp": 1752012032.0747335
+        },
+        "assinatura": "5e4a724d27b1904fff8d1c323398c41b0d9bd496976998e17dcb9681144d89ca855ca34638638982052b5bd41c1ead493e9a9bf25af5b703e2d118dbdc1b9d0a"
     }
 ]
