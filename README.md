@@ -25,9 +25,11 @@ Este projeto oferece ferramentas para mineração, criação e transferência de
 ---
 
 ## Instalação
-
-Clone o repositório:
-
-```bash
-git clone https://github.com/Mestrie1/tiburcio-blockchain.git
+pkg update && pkg upgrade -y
+pkg install git python -y
+pip install flask ecdsa
+git clone https://github.com/Mestrie1/tiburcio-blockchain
 cd tiburcio-blockchain
+
+bash start.sh
+./start.sh
