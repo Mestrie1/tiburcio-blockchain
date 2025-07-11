@@ -1,0 +1,90 @@
+import time
+import requests
+import binascii
+from solana.keypair import Keypair
+from solana.rpc.api import Client
+from solana.transaction import Transaction
+from solana.system_program import TransferParams, transfer
+
+# Configurações da sua carteira Solana (coloque sua chave real)
+SOLANA_PUBLIC = "3uukRWcu1ZHhfPJCFiscYNMQmLYsHMuRHn3RfmUyWkcZ"
+SOLANA_PRIVATE_HEX = "56N34tgc23zhomYapUusNEkRC7y6PTuZdjFJ3UiCojoVkLU7zEG9SmhkwWhDvFZMvECCD8AWqE7Tnzx3v5YRFozH"
+
+# Alvo de lucro para vender (2.0 = 100% de lucro, ou o dobro do preço de compra)
+PROFIT_TARGET = 2.0
+
+def keypair_from_hex(priv_hex):
+    try:
+        priv_bytes = binascii.unhexlify(priv_hex)
+        return Keypair.from_secret_key(priv_bytes)
+    except Exception as e:
+        print("Erro ao converter chave privada:", e)
+        exit(1)
+
+keypair = keypair_from_hex(SOLANA_PRIVATE_HEX)
+client = Client("https://api.mainnet-beta.solana.com")
+
+# Função fictícia para comprar o token (substituir pela real)
+def comprar_token(token_address, amount_sol):
+    print(f"Comprando token {token_address} por {amount_sol} SOL")
+    # Exemplo de envio SOL — isso deve ser adaptado conforme o token/DEX real
+    try:
+        lamports = int(amount_sol * 1_000_000_000)
+        txn = Transaction()
+        txn.add(
+            transfer(
+                TransferParams(
+                    from_pubkey=keypair.public_key,
+                    to_pubkey=token_address,
+                    lamports=lamports,
+                )
+            )
+        )
+        resp = client.send_transaction(txn, keypair)
+        print(f"Compra enviada: {resp}")
+        return True
+    except Exception as e:
+        print(f"Erro na compra: {e}")
+        return False
+
+# Função fictícia para vender o token (implemente a lógica real de venda)
+def vender_token(token_address, amount_sol):
+    print(f"Vendendo token {token_address} por {amount_sol} SOL")
+    # Aqui você coloca o código para vender o token na DEX, adaptado para sua API real
+    # Essa parte depende da integração com a DEX
+    pass
+
+# Função fictícia para buscar preço atual do token (deve ser adaptada)
+def buscar_preco_atual(token_address):
+    # Aqui vai a chamada real para API da DEX ou fonte de preço
+    # Exemplo simples:
+    return 1.0  # preço fixo só para exemplo
+
+def main():
+    print("Robô Pump.fun iniciado (lucro alvo 100%)")
+    while True:
+        # Aqui você implementa a lógica para encontrar tokens em pump, etc.
+        # Exemplo simplificado: vamos supor um token fictício
+        token_address = "EndereçoDoTokenAqui"
+        quantidade_compra = 0.5  # 0.5 SOL
+
+        comprado = comprar_token(token_address, quantidade_compra)
+        if comprado:
+            preco_compra = buscar_preco_atual(token_address)
+            alvo_venda = preco_compra * PROFIT_TARGET
+            print(f"Preço de compra: {preco_compra}, alvo de venda: {alvo_venda}")
+
+            # Simulação de monitoramento do preço para venda
+            while True:
+                preco_atual = buscar_preco_atual(token_address)
+                print(f"Preço atual: {preco_atual}")
+                if preco_atual >= alvo_venda:
+                    vender_token(token_address, quantidade_compra)
+                    print("Lucro alcançado! Venda realizada.")
+                    break
+                time.sleep(10)  # espera 10 segundos antes de checar de novo
+
+        time.sleep(60)  # espera 1 minuto antes de procurar novo token
+
+if __name__ == "__main__":
+    main()

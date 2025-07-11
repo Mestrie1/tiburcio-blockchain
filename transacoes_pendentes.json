@@ -64,5 +64,27 @@
             "timestamp": 1752012032.0747335
         },
         "assinatura": "5e4a724d27b1904fff8d1c323398c41b0d9bd496976998e17dcb9681144d89ca855ca34638638982052b5bd41c1ead493e9a9bf25af5b703e2d118dbdc1b9d0a"
+    },
+    {
+        "tipo": "nft",
+        "de": "ef5fcf9360d3afac5002adf9cac237c39ee48382c9f3f5396e8ff2b150d7a426",
+        "dados": {
+            "nome": "Passarinho",
+            "descricao": "Arte Original dk Mestre Ensinador $Tiburcio",
+            "url_midia": "https://streamable.com/qpdd3s",
+            "unicidade": "0e3178c6c9256b1a11d4e838dc2e5f11e0f18a58a95d5709182480c87dd73428",
+            "royalties": {
+                "criador": "ef5fcf9360d3afac5002adf9cac237c39ee48382c9f3f5396e8ff2b150d7a426",
+                "percentual": 7
+            }
+        },
+        "assinatura": "1152218dcd74cbd29b37306ddf81deedc013e113919e101b08aba8e05c434b5278d0fb467cdd68989e4c6cc65919d5624e57559cd692431f2013b03e2186d0ce"
+    },
+    {
+        "de": "endereco_origem",
+        "para": "endereco_destino",
+        "quantidade": 10,
+        "assinatura": "assinatura_falsa_para_teste",
+        "chave_publica": "chave_publica_teste"
     }
 ]
